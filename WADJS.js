@@ -667,17 +667,17 @@ function displayFoodCards(items) {
 
         card.innerHTML = `
             <img src="${imgUrl}" class="menu-img" onerror="this.style.display='none'">
-            <div class="flex flex-col flex-1">
+            <div class="flex flex-col flex-1 min-w-0">
                 <div class="flex items-center gap-2">
-                    <span class="sender-name">${item.emoji || ""} ${item.name || "Unnamed Menu"}</span>
+                    <span class="sender-name" style="font-size:0.78rem; white-space:normal; word-break:break-word; line-height:1.3;">${item.emoji || ""} ${item.name || "Unnamed Menu"}</span>
                 </div>
                 <div class="flex gap-1.5 mt-1 items-center flex-wrap">
                     <span class="tag-badge">${item.tags?.[0] || 'Menu'}</span>
-                    <span class="text-[9px] text-gray-400">Stock: ${item.stock ?? "∞"}</span>
+                    <span class="text-[10px] text-gray-400">Stock: ${item.stock ?? "∞"}</span>
                     ${qtyInCart > 0 ? `<span class="tag-badge" style="background:rgba(0,242,254,0.15); color:#00f2fe; border:1px solid rgba(0,242,254,0.3);">🛒 ${qtyInCart} in cart</span>` : ''}
                 </div>
             </div>
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-3 flex-shrink-0">
                 <div class="price-container">
                     <span class="price-label">Price</span>
                     <span class="price-value">Rp ${Number(item.price).toLocaleString()}</span>
@@ -686,7 +686,7 @@ function displayFoodCards(items) {
                     ? '<button class="btn-pill btn-orange opacity-50 cursor-not-allowed" disabled>Sold Out</button>'
                     : `<div class="food-card-add-group">
                         <button onclick="addToCart('${item.id}')" class="btn-pill btn-orange food-card-add-btn">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                             Add
                         </button>
                        </div>`
