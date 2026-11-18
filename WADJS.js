@@ -375,7 +375,7 @@ window.processCheckout = function() {
     let itemsHtml = cart.map(item => `
         <div class="flex justify-between items-center text-xs py-1.5 border-b border-white/5">
             <span class="text-white/90 font-medium">${item.emoji || "🍽️"} ${item.name} <span class="text-gray-400">×${item.quantity}</span></span>
-            <span class="text-orange-400 font-semibold">Rp ${(item.price * item.quantity).toLocaleString()}</span>
+            <span class="text-cyan-400 font-semibold">Rp ${(item.price * item.quantity).toLocaleString()}</span>
         </div>
     `).join('');
 
@@ -383,15 +383,15 @@ window.processCheckout = function() {
         <div class="bot-avatar">🧾</div>
         <div class="bubble-bot" style="min-width: 280px; max-width: 380px;">
             <span class="sender-name">Order Summary</span>
-            <div class="flex items-center gap-1.5 text-[10px] text-orange-400 mb-2.5 bg-orange-500/10 border border-orange-500/20 px-2.5 py-1.5 rounded-lg">
+            <div class="flex items-center gap-1.5 text-[10px] text-cyan-400 mb-2.5 bg-cyan-500/10 border border-cyan-500/25 px-2.5 py-1.5 rounded-lg">
                 <span>📍</span>
                 <span class="truncate">${selectedLocation.address || "Location set"}</span>
             </div>
             <div class="my-3 text-gray-300">
                 ${itemsHtml}
-                <div class="flex justify-between items-center font-extrabold mt-3 text-white border-t border-orange-500/40 pt-2.5">
+                <div class="flex justify-between items-center font-extrabold mt-3 text-white border-t border-cyan-500/30 pt-2.5">
                     <span class="text-xs uppercase tracking-wide text-gray-300">Total</span>
-                    <span class="text-base text-orange-400">Rp ${total.toLocaleString()}</span>
+                    <span class="text-base text-cyan-400 font-extrabold">Rp ${total.toLocaleString()}</span>
                 </div>
             </div>
             <p class="text-[10px] uppercase tracking-wider font-bold mb-2 text-gray-400">Select Payment Method:</p>
@@ -674,7 +674,7 @@ function displayFoodCards(items) {
                 <div class="flex gap-1.5 mt-1 items-center flex-wrap">
                     <span class="tag-badge">${item.tags?.[0] || 'Menu'}</span>
                     <span class="text-[9px] text-gray-400">Stock: ${item.stock ?? "∞"}</span>
-                    ${qtyInCart > 0 ? `<span class="tag-badge" style="background:rgba(255,107,0,0.2); color:#ff8c33; border:1px solid rgba(255,107,0,0.3);">🛒 ${qtyInCart} in cart</span>` : ''}
+                    ${qtyInCart > 0 ? `<span class="tag-badge" style="background:rgba(0,242,254,0.15); color:#00f2fe; border:1px solid rgba(0,242,254,0.3);">🛒 ${qtyInCart} in cart</span>` : ''}
                 </div>
             </div>
             <div class="flex items-center gap-3">
@@ -754,16 +754,16 @@ function showMap() {
         <div class="bg-white/5 p-4 rounded-2xl border border-white/10 shadow-lg">
             <div class="flex items-center justify-between mb-2.5">
                 <span class="text-xs font-bold text-white flex items-center gap-1.5">📍 Set Shipping Address Pin:</span>
-                <span class="text-[10px] text-orange-400 font-medium">Drag pin to set exact spot</span>
+                <span class="text-[10px] text-cyan-400 font-medium">Drag pin to set exact spot</span>
             </div>
             <div class="flex gap-2 mb-2.5">
-                <input type="text" id="${searchInputId}" placeholder="Search place or street name..." class="flex-1 bg-black/50 border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-orange-500 transition-colors" onkeypress="if(event.key === 'Enter') window.performGeocode('${searchInputId}', '${mapId}')">
-                <button id="search-btn-${mapId}" onclick="window.performGeocode('${searchInputId}', '${mapId}')" class="bg-gradient-to-r from-[#ff6b00] to-[#e65c00] text-black font-bold px-3.5 rounded-xl flex items-center justify-center text-xs hover:opacity-90 transition-all">🔍</button>
+                <input type="text" id="${searchInputId}" placeholder="Search place or street name..." class="flex-1 bg-black/50 border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-cyan-400 transition-colors" onkeypress="if(event.key === 'Enter') window.performGeocode('${searchInputId}', '${mapId}')">
+                <button id="search-btn-${mapId}" onclick="window.performGeocode('${searchInputId}', '${mapId}')" class="bg-gradient-to-r from-[#0284c7] to-[#00f2fe] text-white font-bold px-3.5 rounded-xl flex items-center justify-center text-xs hover:opacity-95 shadow-md shadow-cyan-500/25 transition-all">🔍</button>
             </div>
-            <div id="${mapId}" style="height: 190px; width: 100%; border-radius: 12px; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.08);"></div>
+            <div id="${mapId}" style="height: 190px; width: 100%; border-radius: 12px; margin-bottom: 10px; border: 1px solid rgba(0,242,254,0.18);"></div>
             <input type="text" id="${addressInputId}"
                 placeholder="House Details (e.g., Black Gate)"
-                class="w-full bg-black/50 border border-white/10 rounded-xl px-3 py-2 text-xs text-white mb-2.5 outline-none focus:border-orange-500 transition-colors">
+                class="w-full bg-black/50 border border-white/10 rounded-xl px-3 py-2 text-xs text-white mb-2.5 outline-none focus:border-cyan-400 transition-colors">
             <button onclick="window.confirmLocation('${addressInputId}')" class="btn-pill btn-orange w-full py-2.5 font-extrabold text-xs">
                 Confirm Location
             </button>
@@ -807,13 +807,13 @@ async function showHistory() {
             const date = data.timestamp?.toDate().toLocaleString('id-ID', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'}) || "Just now";
             const status = data.status || "Processing";
 
-            let statusPillClass = "bg-orange-500/15 text-orange-400 border-orange-500/30";
+            let statusPillClass = "bg-cyan-500/15 text-cyan-400 border-cyan-500/30";
             if (status === "Preparing") statusPillClass = "bg-yellow-500/15 text-yellow-400 border-yellow-500/30";
             else if (status === "On the Way") statusPillClass = "bg-blue-500/15 text-blue-400 border-blue-500/30";
             else if (status === "Delivered" || status === "Selesai") statusPillClass = "bg-green-500/15 text-green-400 border-green-500/30";
 
             historyHtml += `
-                <div class="bg-white/5 border border-white/10 rounded-2xl p-3.5 text-left transition-all hover:border-orange-500/30">
+                <div class="bg-white/5 border border-white/10 rounded-2xl p-3.5 text-left transition-all hover:border-cyan-500/30">
                     <div class="flex justify-between items-center mb-2.5 pb-2 border-b border-white/5">
                         <div class="flex items-center gap-2">
                             <span class="text-[10px] font-mono font-bold text-gray-300">#${orderId.slice(-5).toUpperCase()}</span>
@@ -827,9 +827,9 @@ async function showHistory() {
                     <div class="flex justify-between items-center border-t border-white/5 pt-2.5 mt-1">
                         <div>
                             <span class="text-[9px] text-gray-400 uppercase tracking-wider block">Total</span>
-                            <span class="text-sm font-extrabold text-orange-400">Rp ${(data.totalPrice || 0).toLocaleString()}</span>
+                            <span class="text-sm font-extrabold text-cyan-400">Rp ${(data.totalPrice || 0).toLocaleString()}</span>
                         </div>
-                        <button onclick="window.openBuyerChat('${orderId}')" class="text-xs bg-orange-500/10 hover:bg-orange-500/20 text-orange-400 border border-orange-500/25 px-3 py-1.5 rounded-xl font-bold transition-all flex items-center gap-1.5">
+                        <button onclick="window.openBuyerChat('${orderId}')" class="text-xs bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/25 px-3 py-1.5 rounded-xl font-bold transition-all flex items-center gap-1.5">
                             💬 Chat
                         </button>
                     </div>
@@ -889,18 +889,18 @@ window.trackLatestOrderInChat = async function() {
                 <div class="bg-white/5 border border-white/10 rounded-2xl p-4 w-full max-w-sm shadow-xl">
                     <div class="flex flex-col gap-1 mb-4">
                         <div class="flex justify-between items-center">
-                            <span class="text-[10px] font-bold text-orange-500 uppercase tracking-widest">Live Tracker 🛵</span>
+                            <span class="text-[10px] font-bold text-cyan-400 uppercase tracking-widest">Live Tracker 🛵</span>
                             <span class="text-[10px] text-gray-500">Order #${orderId.slice(0,5)}</span>
                         </div>
                     </div>
                     <div class="relative h-1.5 bg-white/10 rounded-full mb-6 overflow-hidden">
-                        <div class="absolute top-0 left-0 h-full bg-gradient-to-r from-orange-600 to-orange-400 rounded-full transition-all duration-1000" style="width: ${progress}%"></div>
+                        <div class="absolute top-0 left-0 h-full bg-gradient-to-r from-[#0284c7] to-[#00f2fe] rounded-full transition-all duration-1000 shadow-sm shadow-cyan-400/50" style="width: ${progress}%"></div>
                     </div>
                     <div class="space-y-4 ${showMapTracker ? 'mb-4' : ''}">
                         ${steps.map((step, idx) => `
                             <div class="flex items-center gap-3">
-                                <div class="w-3 h-3 rounded-full flex items-center justify-center ${idx <= currentIdx ? 'bg-orange-500/20' : ''}">
-                                     <div class="w-1.5 h-1.5 rounded-full ${idx <= currentIdx ? 'bg-orange-500 shadow-[0_0_8px_#ff6b00]' : 'bg-white/20'}"></div>
+                                <div class="w-3 h-3 rounded-full flex items-center justify-center ${idx <= currentIdx ? 'bg-cyan-500/20' : ''}">
+                                     <div class="w-1.5 h-1.5 rounded-full ${idx <= currentIdx ? 'bg-cyan-400 shadow-[0_0_8px_#00f2fe]' : 'bg-white/20'}"></div>
                                 </div>
                                 <span class="${idx <= currentIdx ? 'text-white font-bold' : 'text-gray-500'} text-xs tracking-wide">${step}</span>
                             </div>
@@ -909,13 +909,13 @@ window.trackLatestOrderInChat = async function() {
                     ${showMapTracker ? `
                         <div class="bg-black/40 px-3 py-2 rounded-xl mb-2 border border-white/10 flex justify-between items-center transition-all">
                             <div class="flex items-center gap-2">
-                                <span class="bg-orange-500/20 text-orange-400 p-1.5 rounded-full text-[10px]">🛵</span>
+                                <span class="bg-cyan-500/20 text-cyan-300 p-1.5 rounded-full text-[10px]">🛵</span>
                                 <span class="text-[11px] font-bold text-white tracking-wide" id="eta-display-${orderId}">Calculating ETA...</span>
                             </div>
                         </div>
                         <div id="${mapContainerId}" class="w-full h-32 rounded-xl bg-black/40 border border-white/10 mb-4 z-0 relative overflow-hidden"></div>
                     ` : ''}
-                    <button onclick="window.openBuyerChat('${orderId}')" class="w-full mt-2 bg-orange-500/10 border border-orange-500/20 text-orange-400 font-bold py-2 rounded-xl text-xs hover:bg-orange-500/20 transition-all">
+                    <button onclick="window.openBuyerChat('${orderId}')" class="w-full mt-2 bg-cyan-500/10 border border-cyan-500/25 text-cyan-400 font-bold py-2 rounded-xl text-xs hover:bg-cyan-500/20 transition-all">
                         💬 Chat with Merchant
                     </button>
                 </div>
@@ -938,7 +938,7 @@ window.trackLatestOrderInChat = async function() {
                         const homeIcon = L.divIcon({className: 'bg-transparent', html: '<div class="text-xl">🏠</div>', iconSize: [24, 24]});
                         window.buyerDeliveryMarker = L.marker([driverLat, driverLng], {icon: driverIcon}).addTo(map);
                         window.buyerHomeMarker = L.marker([homeLat, homeLng], {icon: homeIcon}).addTo(map);
-                        window.buyerRouteLine = L.polyline([[driverLat, driverLng], [homeLat, homeLng]], {color: '#ff6b00', weight: 3, dashArray: '5, 5'}).addTo(map);
+                        window.buyerRouteLine = L.polyline([[driverLat, driverLng], [homeLat, homeLng]], {color: '#00f2fe', weight: 3, dashArray: '5, 5'}).addTo(map);
                         window.buyerDeliveryMap = map;
                     } else {
                         window.buyerDeliveryMarker.setLatLng([driverLat, driverLng]);
@@ -989,7 +989,7 @@ window.openBuyerChat = function(orderId) {
             box.innerHTML = msgs.map(m => `
                 <div class="flex flex-col ${m.sender === 'buyer' ? 'items-end' : 'items-start'}">
                     <span class="text-[8px] text-gray-500 mb-0.5">${m.sender === 'buyer' ? 'YOU' : 'RESTAURANT'}</span>
-                    <div class="px-3 py-2 rounded-xl max-w-[80%] text-sm ${m.sender === 'buyer' ? 'bg-orange-500 text-black rounded-tr-sm' : 'bg-white/10 text-white rounded-tl-sm'}">
+                    <div class="px-3 py-2 rounded-xl max-w-[80%] text-sm ${m.sender === 'buyer' ? 'bg-gradient-to-r from-[#0284c7] to-[#00f2fe] text-white font-medium rounded-tr-sm shadow-md shadow-cyan-500/20' : 'bg-white/10 text-white rounded-tl-sm'}">
                         ${m.text}
                     </div>
                 </div>

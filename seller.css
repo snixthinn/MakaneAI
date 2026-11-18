@@ -1,6 +1,6 @@
 /* ============================================================
    seller.css  — Makan.ai Seller Dashboard
-   Design system: dark #0a0a0a | orange #ff6b00 | glass cards
+   Design system: dark #030717 | cyan #00f2fe & sea-blue #0284c7 | glass cards
    ============================================================ */
 
 /* ── Font import ──────────────────────────────────────────── */
@@ -21,32 +21,33 @@ nav#seller-nav {
     position: sticky;
     top: 0;
     z-index: 100;
-    background: rgba(10,10,10,0.9);
+    background: rgba(3, 7, 23, 0.9);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border-bottom: 1px solid transparent;
     background-image:
-        linear-gradient(rgba(10,10,10,0.9), rgba(10,10,10,0.9)),
-        linear-gradient(90deg, transparent 30%, rgba(255,107,0,0.25) 100%);
+        linear-gradient(rgba(3, 7, 23, 0.9), rgba(3, 7, 23, 0.9)),
+        linear-gradient(90deg, transparent 30%, rgba(0, 242, 254, 0.25) 100%);
     background-origin: border-box;
     background-clip: padding-box, border-box;
 }
 
 /* ── Stat cards ───────────────────────────────────────────── */
 .stat-card {
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.06);
+    background: rgba(7, 18, 42, 0.65);
+    border: 1px solid rgba(0, 242, 254, 0.12);
     border-radius: 20px;
     padding: 1.5rem;
     transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
     position: relative;
     overflow: hidden;
+    backdrop-filter: blur(16px);
 }
 
 .stat-card:hover {
     transform: translateY(-3px);
-    box-shadow: 0 8px 32px rgba(255,107,0,0.12);
-    border-color: rgba(255,107,0,0.25);
+    box-shadow: 0 8px 32px rgba(0, 242, 254, 0.16);
+    border-color: rgba(0, 242, 254, 0.35);
 }
 
 /* Shimmer pseudo-element on hover */
@@ -54,7 +55,7 @@ nav#seller-nav {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, rgba(255,107,0,0.04) 0%, transparent 60%);
+    background: linear-gradient(135deg, rgba(0, 242, 254, 0.05) 0%, transparent 60%);
     opacity: 0;
     transition: opacity 0.3s ease;
     pointer-events: none;
@@ -75,24 +76,33 @@ nav#seller-nav {
 }
 .stat-icon-blue   { background: rgba(59,130,246,0.15);  color: #60a5fa; }
 .stat-icon-red    { background: rgba(239,68,68,0.12);   color: #f87171; }
-.stat-icon-orange { background: rgba(255,107,0,0.12);   color: #ff8c33; }
+.stat-icon-orange,
+.stat-icon-cyan   { background: rgba(0,242,254,0.12);   color: #00f2fe; }
 
 /* ── Dashboard header greeting ───────────────────────────── */
 .dashboard-greeting {
     font-size: 0.75rem;
-    color: rgba(255,255,255,0.4);
-    font-weight: 500;
+    color: rgba(56, 189, 248, 0.65);
+    font-weight: 600;
     letter-spacing: 0.5px;
     margin-bottom: 2px;
 }
 .dashboard-title {
     font-size: 1.75rem;
     font-weight: 800;
-    background: linear-gradient(135deg, #ff6b00, #ff8c33);
+    background: linear-gradient(135deg, #0284c7 0%, #00f2fe 50%, #38bdf8 100%);
+    background-size: 200% 200%;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
     line-height: 1.1;
+    animation: seaCyanGradientFlow 4s ease-in-out infinite;
+}
+
+@keyframes seaCyanGradientFlow {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
 
 /* ── Open/Closed status pill ─────────────────────────────── */
@@ -147,14 +157,14 @@ nav#seller-nav {
     transition: background 0.2s ease;
 }
 .table-row:hover {
-    background: rgba(255,107,0,0.04);
+    background: rgba(0, 242, 254, 0.04);
 }
 /* Zebra striping */
 .table-zebra tr:nth-child(even) td {
     background: rgba(255,255,255,0.015);
 }
 .table-zebra tr:nth-child(even):hover td {
-    background: rgba(255,107,0,0.04);
+    background: rgba(0, 242, 254, 0.04);
 }
 
 /* Table header */
@@ -164,8 +174,8 @@ nav#seller-nav {
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 1.2px;
-    color: rgba(255,255,255,0.35);
-    border-bottom: 1px solid rgba(255,255,255,0.08);
+    color: rgba(56, 189, 248, 0.5);
+    border-bottom: 1px solid rgba(0, 242, 254, 0.1);
 }
 
 /* ── Badges ───────────────────────────────────────────────── */
@@ -190,9 +200,9 @@ nav#seller-nav {
     white-space: nowrap;
 }
 .status-processing {
-    background: rgba(99,102,241,0.15);
-    color: #a5b4fc;
-    border: 1px solid rgba(99,102,241,0.25);
+    background: rgba(0,242,254,0.12);
+    color: #38bdf8;
+    border: 1px solid rgba(0,242,254,0.3);
 }
 .status-preparing {
     background: rgba(234,179,8,0.12);
@@ -200,9 +210,9 @@ nav#seller-nav {
     border: 1px solid rgba(234,179,8,0.25);
 }
 .status-onway {
-    background: rgba(59,130,246,0.12);
-    color: #93c5fd;
-    border: 1px solid rgba(59,130,246,0.25);
+    background: rgba(2,132,199,0.15);
+    color: #38bdf8;
+    border: 1px solid rgba(2,132,199,0.35);
 }
 .status-delivered {
     background: rgba(34,197,94,0.12);
@@ -232,14 +242,14 @@ nav#seller-nav {
 .action-btn:active { transform: translateY(0); }
 
 .action-btn-prepare {
-    background: linear-gradient(135deg, #f59e0b, #d97706);
-    color: #000;
-    box-shadow: 0 3px 10px rgba(245,158,11,0.3);
+    background: linear-gradient(135deg, #0284c7, #00f2fe);
+    color: #020817;
+    box-shadow: 0 3px 10px rgba(0,242,254,0.3);
 }
 .action-btn-ship {
-    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    background: linear-gradient(135deg, #0369a1, #38bdf8);
     color: #fff;
-    box-shadow: 0 3px 10px rgba(59,130,246,0.3);
+    box-shadow: 0 3px 10px rgba(2,132,199,0.3);
 }
 .action-btn-finish {
     background: linear-gradient(135deg, #22c55e, #16a34a);
@@ -249,9 +259,9 @@ nav#seller-nav {
 
 /* Edit button in inventory */
 .btn-edit {
-    background: rgba(255,107,0,0.1);
-    border: 1px solid rgba(255,107,0,0.3);
-    color: #ff8c33;
+    background: rgba(0,242,254,0.1);
+    border: 1px solid rgba(0,242,254,0.3);
+    color: #00f2fe;
     padding: 4px 12px;
     border-radius: 8px;
     font-size: 0.65rem;
@@ -262,8 +272,8 @@ nav#seller-nav {
     letter-spacing: 0.3px;
 }
 .btn-edit:hover {
-    background: rgba(255,107,0,0.2);
-    box-shadow: 0 2px 10px rgba(255,107,0,0.2);
+    background: rgba(0,242,254,0.2);
+    box-shadow: 0 2px 10px rgba(0,242,254,0.25);
     transform: translateY(-1px);
 }
 
@@ -319,8 +329,8 @@ nav#seller-nav {
     animation: inbox-pulse 2s ease-in-out infinite;
 }
 @keyframes inbox-pulse {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(255,107,0,0.5); }
-    50%       { box-shadow: 0 0 0 6px rgba(255,107,0,0); }
+    0%, 100% { box-shadow: 0 0 0 0 rgba(0,242,254,0.5); }
+    50%       { box-shadow: 0 0 0 6px rgba(0,242,254,0); }
 }
 
 /* ── Chat inbox conversation items ───────────────────────── */
@@ -335,7 +345,7 @@ nav#seller-nav {
     position: relative;
 }
 .convo-item:hover {
-    background: rgba(255,107,0,0.07);
+    background: rgba(0,242,254,0.07);
 }
 .convo-avatar {
     width: 42px;
@@ -347,9 +357,9 @@ nav#seller-nav {
     font-size: 1rem;
     font-weight: 800;
     flex-shrink: 0;
-    background: linear-gradient(135deg, rgba(255,107,0,0.3), rgba(255,107,0,0.1));
-    border: 1px solid rgba(255,107,0,0.25);
-    color: #ff8c33;
+    background: linear-gradient(135deg, rgba(2,132,199,0.35), rgba(0,242,254,0.15));
+    border: 1px solid rgba(0,242,254,0.3);
+    color: #00f2fe;
 }
 .convo-unread-dot {
     width: 9px;
@@ -359,7 +369,7 @@ nav#seller-nav {
     position: absolute;
     top: 10px;
     right: 12px;
-    border: 2px solid #0a0a0a;
+    border: 2px solid #030717;
     animation: pulse-ring 1.6s ease-out infinite;
 }
 
@@ -379,9 +389,10 @@ nav#seller-nav {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, rgba(255,107,0,0.2), rgba(230,92,0,0.1));
-    border: 1px solid rgba(255,107,0,0.2);
+    background: linear-gradient(135deg, rgba(2,132,199,0.25), rgba(0,242,254,0.12));
+    border: 1px solid rgba(0,242,254,0.25);
     font-size: 0.95rem;
+    color: #00f2fe;
 }
 
 /* ── Modals ───────────────────────────────────────────────── */
@@ -389,9 +400,9 @@ nav#seller-nav {
 .modal-backdrop {
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.75);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
+    background: rgba(0,0,0,0.78);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -400,20 +411,20 @@ nav#seller-nav {
 
 /* Modal card */
 .modal-card {
-    background: #161616;
-    border: 1px solid rgba(255,255,255,0.08);
+    background: #050c1e;
+    border: 1px solid rgba(0,242,254,0.2);
     border-radius: 24px;
     width: 100%;
     max-width: 460px;
     overflow: hidden;
-    box-shadow: 0 24px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,107,0,0.05);
+    box-shadow: 0 24px 80px rgba(0,0,0,0.8), 0 0 0 1px rgba(0,242,254,0.08);
     animation: modalSlideUp 0.3s cubic-bezier(0.16,1,0.3,1) forwards;
 }
 
 /* Modal header gradient bar */
 .modal-header {
-    background: linear-gradient(135deg, rgba(255,107,0,0.15), rgba(230,92,0,0.05));
-    border-bottom: 1px solid rgba(255,107,0,0.12);
+    background: linear-gradient(135deg, rgba(2,132,199,0.22), rgba(0,242,254,0.08));
+    border-bottom: 1px solid rgba(0,242,254,0.15);
     padding: 1.25rem 1.5rem;
     display: flex;
     justify-content: space-between;
@@ -422,15 +433,15 @@ nav#seller-nav {
 .modal-header-title {
     font-size: 1rem;
     font-weight: 800;
-    color: #ff8c33;
+    color: #00f2fe;
 }
 .modal-header-sub {
     font-size: 0.65rem;
-    color: rgba(255,255,255,0.3);
+    color: rgba(56,189,248,0.6);
     margin-top: 2px;
 }
 .modal-close-btn {
-    color: rgba(255,255,255,0.35);
+    color: rgba(255,255,255,0.45);
     background: none;
     border: none;
     font-size: 1.1rem;
@@ -442,7 +453,7 @@ nav#seller-nav {
 }
 .modal-close-btn:hover {
     color: white;
-    background: rgba(255,255,255,0.08);
+    background: rgba(0,242,254,0.12);
 }
 
 /* Modal body */
@@ -452,7 +463,7 @@ nav#seller-nav {
 .modal-input {
     width: 100%;
     background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.08);
+    border: 1px solid rgba(0,242,254,0.15);
     border-radius: 12px;
     padding: 0.75rem 1rem;
     color: white;
@@ -463,15 +474,15 @@ nav#seller-nav {
     box-sizing: border-box;
 }
 .modal-input:focus {
-    border-color: rgba(255,107,0,0.5);
-    box-shadow: 0 0 0 3px rgba(255,107,0,0.08);
+    border-color: rgba(0,242,254,0.65);
+    box-shadow: 0 0 0 3px rgba(0,242,254,0.15);
 }
 .modal-label {
     font-size: 0.6rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 1px;
-    color: rgba(255,255,255,0.35);
+    color: rgba(56,189,248,0.7);
     display: block;
     margin-bottom: 0.4rem;
 }
@@ -482,33 +493,34 @@ nav#seller-nav {
     padding: 0.75rem;
     font-size: 0.75rem;
     font-weight: 700;
-    color: rgba(255,255,255,0.4);
+    color: rgba(255,255,255,0.5);
     background: none;
-    border: 1px solid rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.1);
     border-radius: 12px;
     cursor: pointer;
     transition: all 0.2s;
 }
 .modal-btn-cancel:hover {
-    background: rgba(255,255,255,0.05);
-    color: rgba(255,255,255,0.7);
+    background: rgba(255,255,255,0.06);
+    color: rgba(255,255,255,0.8);
 }
 .modal-btn-submit {
     flex: 1;
     padding: 0.75rem;
     font-size: 0.8rem;
     font-weight: 800;
-    background: linear-gradient(135deg, #ff6b00, #e65c00);
+    background: linear-gradient(135deg, #0284c7, #00f2fe);
     color: white;
     border: none;
     border-radius: 12px;
     cursor: pointer;
-    box-shadow: 0 6px 20px rgba(255,107,0,0.3);
+    box-shadow: 0 6px 20px rgba(0,242,254,0.35);
     transition: transform 0.15s ease, box-shadow 0.15s ease;
+    text-shadow: 0 1px 2px rgba(0,20,40,0.3);
 }
 .modal-btn-submit:hover {
     transform: translateY(-1px);
-    box-shadow: 0 10px 28px rgba(255,107,0,0.4);
+    box-shadow: 0 10px 28px rgba(0,242,254,0.5);
 }
 .modal-btn-submit:active { transform: translateY(0); }
 
@@ -534,34 +546,34 @@ nav#seller-nav {
 .seller-pw-mask {
     font-family: monospace;
     background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.07);
+    border: 1px solid rgba(0,242,254,0.15);
     padding: 2px 10px;
     border-radius: 6px;
     font-size: 0.75rem;
     letter-spacing: 2px;
     cursor: pointer;
-    color: rgba(255,255,255,0.5);
+    color: rgba(255,255,255,0.6);
     transition: background 0.2s, color 0.2s;
     user-select: none;
 }
 .seller-pw-mask:hover {
-    background: rgba(255,107,0,0.08);
-    color: #ff8c33;
+    background: rgba(0,242,254,0.12);
+    color: #00f2fe;
 }
 
 /* ── Scrollbar ───────────────────────────────────────────── */
 html, body, * {
     scrollbar-width: thin;
-    scrollbar-color: rgba(255, 107, 0, 0.38) rgba(255, 255, 255, 0.02);
+    scrollbar-color: rgba(0, 242, 254, 0.38) rgba(255, 255, 255, 0.02);
 }
 ::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
-    background: rgba(255,107,0,0.3);
+    background: rgba(0,242,254,0.35);
     border-radius: 99px;
     transition: background 0.2s ease;
 }
-::-webkit-scrollbar-thumb:hover { background: rgba(255,107,0,0.6); }
+::-webkit-scrollbar-thumb:hover { background: rgba(0,242,254,0.7); }
 
 /* ── Responsive ──────────────────────────────────────────── */
 @media (max-width: 768px) {

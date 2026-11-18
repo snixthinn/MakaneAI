@@ -139,7 +139,7 @@ function renderInventory() {
       <tr class="table-row">
         <td class="p-3 text-sm font-medium text-white">${item.emoji || "🍽️"} ${item.name}</td>
         <td class="p-3 text-sm text-gray-400">${(item.tags || []).join(", ")}</td>
-        <td class="p-3 text-sm text-right font-medium text-orange-400">Rp ${(item.price || 0).toLocaleString()}</td>
+        <td class="p-3 text-sm text-right font-medium text-cyan-400 font-semibold">Rp ${(item.price || 0).toLocaleString()}</td>
         <td class="p-3 text-sm text-center">
           ${item.stock === 0
             ? '<span class="badge-low">OUT</span>'
@@ -482,7 +482,7 @@ function renderCustomerOrders() {
         </div>
         <div class="text-white/40 text-xs mt-1">
           ${isSearching || isFiltered
-            ? `<button onclick="setOrdersFilter('all'); clearOrdersSearch();" class="text-orange-400 hover:underline mt-2 inline-block">Reset search & filters</button>`
+            ? `<button onclick="setOrdersFilter('all'); clearOrdersSearch();" class="text-cyan-400 hover:underline mt-2 inline-block">Reset search & filters</button>`
             : "When buyers place food orders, they will appear here grouped by customer in real-time."}
         </div>
       </div>`;
@@ -586,7 +586,7 @@ function renderCustomerOrders() {
                   <div class="order-details-grid">
                     <div>
                       <div class="order-address-box">
-                        <span style="color:#ff8c33; flex-shrink:0;">📍</span>
+                        <span style="color:#00f2fe; flex-shrink:0;">📍</span>
                         <span>${address}</span>
                       </div>
                       ${notes ? `
@@ -676,7 +676,7 @@ window.openChatModal = function(orderId) {
         <span class="text-[8px] text-gray-500 mb-0.5">${m.sender.toUpperCase()}</span>
         <div class="px-3 py-2 rounded-xl max-w-[80%] text-sm
           ${m.sender === "seller"
-            ? "bg-orange-500 text-black rounded-tr-sm"
+            ? "bg-gradient-to-r from-[#0284c7] to-[#00f2fe] text-white font-medium rounded-tr-sm shadow-sm"
             : "bg-white/10 text-white rounded-tl-sm"}">
           ${m.text}
         </div>
@@ -807,8 +807,8 @@ function renderChatInboxSection(orders) {
     const senderLabel = last?.sender === "buyer" ? "Buyer" : "You";
 
     return `
-      <div onclick="openInboxDetail('${order.id}')" style="display:flex; align-items:center; gap:12px; padding:0.9rem 1rem; border-bottom:1px solid rgba(255,255,255,0.05); cursor:pointer; transition:background 0.2s; ${isUnread ? 'background:rgba(255,107,0,0.04);' : ''}" onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='${isUnread ? 'rgba(255,107,0,0.04)' : 'transparent'}'">
-        <div style="width:40px; height:40px; border-radius:50%; background:${isUnread ? 'rgba(255,107,0,0.2)' : 'rgba(255,255,255,0.05)'}; display:flex; align-items:center; justify-content:center; font-size:1.1rem; flex-shrink:0; border:1px solid ${isUnread ? 'rgba(255,107,0,0.3)' : 'rgba(255,255,255,0.08)'}">
+      <div onclick="openInboxDetail('${order.id}')" style="display:flex; align-items:center; gap:12px; padding:0.9rem 1rem; border-bottom:1px solid rgba(255,255,255,0.05); cursor:pointer; transition:background 0.2s; ${isUnread ? 'background:rgba(0,242,254,0.06);' : ''}" onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='${isUnread ? 'rgba(0,242,254,0.06)' : 'transparent'}'">
+        <div style="width:40px; height:40px; border-radius:50%; background:${isUnread ? 'rgba(0,242,254,0.2)' : 'rgba(255,255,255,0.05)'}; display:flex; align-items:center; justify-content:center; font-size:1.1rem; flex-shrink:0; border:1px solid ${isUnread ? 'rgba(0,242,254,0.35)' : 'rgba(255,255,255,0.08)'}">
           🧑‍💻
         </div>
         <div style="flex:1; min-width:0;">
@@ -817,11 +817,11 @@ function renderChatInboxSection(orders) {
             <span style="font-size:0.65rem; color:#555;">${time}</span>
           </div>
           <div style="font-size:0.72rem; color:#888; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
-            <span style="color:${isUnread ? '#ff8c33' : '#666'};">${senderLabel}:</span> ${preview}
+            <span style="color:${isUnread ? '#00f2fe' : '#666'};">${senderLabel}:</span> ${preview}
           </div>
           <div style="margin-top:3px; font-size:0.65rem; color:#555;">${order.status || 'Processing'} · ${(msgs.length)} message${msgs.length !== 1 ? 's' : ''}</div>
         </div>
-        ${isUnread ? '<div style="width:8px; height:8px; border-radius:50%; background:#ff6b00; flex-shrink:0;"></div>' : ''}
+        ${isUnread ? '<div style="width:8px; height:8px; border-radius:50%; background:#00f2fe; box-shadow:0 0 8px rgba(0,242,254,0.8); flex-shrink:0;"></div>' : ''}
       </div>`;
   }).join("");
 }
@@ -886,19 +886,19 @@ function renderInboxConvoList(orders) {
     const senderLabel = last?.sender === "buyer" ? "Buyer" : "You";
 
     return `
-      <div onclick="openInboxDetail('${order.id}')" style="display:flex; align-items:center; gap:12px; padding:0.85rem; border-radius:12px; cursor:pointer; transition:background 0.15s; margin-bottom:4px; ${isUnread ? 'background:rgba(255,107,0,0.07); border:1px solid rgba(255,107,0,0.15);' : 'background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05);'}" onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='${isUnread ? 'rgba(255,107,0,0.07)' : 'rgba(255,255,255,0.03)'}'">
-        <div style="width:42px; height:42px; border-radius:50%; background:${isUnread ? 'rgba(255,107,0,0.25)' : 'rgba(255,255,255,0.08)'}; display:flex; align-items:center; justify-content:center; font-size:1.2rem; flex-shrink:0;">🧑‍💻</div>
+      <div onclick="openInboxDetail('${order.id}')" style="display:flex; align-items:center; gap:12px; padding:0.85rem; border-radius:12px; cursor:pointer; transition:background 0.15s; margin-bottom:4px; ${isUnread ? 'background:rgba(0,242,254,0.08); border:1px solid rgba(0,242,254,0.25);' : 'background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05);'}" onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='${isUnread ? 'rgba(0,242,254,0.08)' : 'rgba(255,255,255,0.03)'}'">
+        <div style="width:42px; height:42px; border-radius:50%; background:${isUnread ? 'rgba(0,242,254,0.25)' : 'rgba(255,255,255,0.08)'}; display:flex; align-items:center; justify-content:center; font-size:1.2rem; flex-shrink:0;">🧑‍💻</div>
         <div style="flex:1; min-width:0;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2px;">
             <span style="font-size:0.8rem; font-weight:${isUnread ? '800' : '600'}; color:${isUnread ? 'white' : 'rgba(255,255,255,0.65)'};">Order #${order.id.slice(-5).toUpperCase()}</span>
             <span style="font-size:0.62rem; color:#555;">${time}</span>
           </div>
           <div style="font-size:0.7rem; color:#777; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
-            <span style="color:${isUnread ? '#ff8c33' : '#555'};">${senderLabel}:</span> ${preview || 'No messages'}
+            <span style="color:${isUnread ? '#00f2fe' : '#555'};">${senderLabel}:</span> ${preview || 'No messages'}
           </div>
           <div style="margin-top:2px; font-size:0.62rem; color:#444;">${order.status || 'Processing'}</div>
         </div>
-        ${isUnread ? '<div style="width:9px; height:9px; border-radius:50%; background:#ff6b00; box-shadow:0 0 8px #ff6b00; flex-shrink:0;"></div>' : ''}
+        ${isUnread ? '<div style="width:9px; height:9px; border-radius:50%; background:#00f2fe; box-shadow:0 0 8px #00f2fe; flex-shrink:0;"></div>' : ''}
       </div>`;
   }).join("");
 }
@@ -947,7 +947,7 @@ function renderInboxMessages(msgs) {
     return `
       <div style="display:flex; flex-direction:column; align-items:${isSeller ? 'flex-end' : 'flex-start'};">
         <span style="font-size:0.6rem; color:#555; margin-bottom:3px; padding-right:4px; padding-left:4px;">${isSeller ? 'YOU' : 'BUYER'} · ${time}</span>
-        <div style="max-width:80%; padding:0.6rem 0.9rem; border-radius:${isSeller ? '14px 14px 2px 14px' : '14px 14px 14px 2px'}; font-size:0.82rem; line-height:1.4; ${isSeller ? 'background:linear-gradient(135deg,#ff6b00,#e65c00); color:black; font-weight:600;' : 'background:rgba(255,255,255,0.08); color:white;'}">
+        <div style="max-width:80%; padding:0.6rem 0.9rem; border-radius:${isSeller ? '14px 14px 2px 14px' : '14px 14px 14px 2px'}; font-size:0.82rem; line-height:1.4; ${isSeller ? 'background:linear-gradient(135deg,#0284c7,#00f2fe); color:#030717; font-weight:700;' : 'background:rgba(255,255,255,0.08); color:white;'}">
           ${m.text}
         </div>
       </div>`;

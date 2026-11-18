@@ -68,7 +68,7 @@ window.openBuyerChat = function(orderId) {
         <span class="text-[8px] text-gray-500 mb-0.5">${isBuyer ? "YOU" : "RESTAURANT"} · ${time}</span>
         <div class="px-3 py-2 rounded-xl max-w-[80%] text-sm
           ${isBuyer
-            ? "bg-orange-500 text-black rounded-tr-sm"
+            ? "bg-gradient-to-r from-[#0284c7] to-[#00f2fe] text-white font-medium rounded-tr-sm shadow-md shadow-cyan-500/20"
             : "bg-white/10 text-white rounded-tl-sm"}">
           ${m.text}
         </div>
