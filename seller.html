@@ -20,7 +20,7 @@
                 radial-gradient(circle at 50% 50%, rgba(3, 105, 161, 0.05), transparent 50%);
             background-attachment: fixed;
         }
-        .seller-container { max-width: 1000px; margin: 2rem auto; padding: 0 1rem; }
+        .seller-container { position: relative; z-index: 2; max-width: 1000px; margin: 2rem auto; padding: 0 1rem; }
         .stat-card { background: rgba(7, 18, 42, 0.65); border: 1px solid rgba(0, 242, 254, 0.12); border-radius: 20px; padding: 1.5rem; backdrop-filter: blur(16px); }
         .table-row { border-bottom: 1px solid rgba(255,255,255,0.05); transition: 0.3s; }
         .table-row:hover { background: rgba(0, 242, 254, 0.04); }
@@ -56,6 +56,180 @@
     </script>
 </head>
 <body>
+
+<!-- Background Food Shadow Silhouettes -->
+<div class="food-silhouette-bg" aria-hidden="true">
+    <!-- 1. Ramen / Noodle Bowl with Chopsticks & Steam -->
+    <div class="food-silhouette-item food-item-1">
+        <div class="food-silhouette-shadow"></div>
+        <svg viewBox="0 0 100 100" class="food-silhouette-svg">
+            <defs>
+                <linearGradient id="foodGradBowl" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#00f2fe" stop-opacity="0.9"/>
+                    <stop offset="50%" stop-color="#0284c7" stop-opacity="0.45"/>
+                    <stop offset="100%" stop-color="#030717" stop-opacity="0.85"/>
+                </linearGradient>
+            </defs>
+            <ellipse cx="50" cy="84" rx="20" ry="4" fill="url(#foodGradBowl)"/>
+            <path d="M18 48 C20 76 34 84 50 84 C66 84 80 76 82 48 Z" fill="url(#foodGradBowl)"/>
+            <ellipse cx="50" cy="48" rx="32" ry="7" fill="url(#foodGradBowl)" stroke="#00f2fe" stroke-width="1.6" stroke-opacity="0.6"/>
+            <line x1="28" y1="44" x2="82" y2="28" stroke="#00f2fe" stroke-width="2.5" stroke-linecap="round" stroke-opacity="0.75"/>
+            <line x1="30" y1="48" x2="86" y2="34" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-opacity="0.65"/>
+            <path d="M42 38 Q38 30 43 24 T41 12" fill="none" stroke="#00f2fe" stroke-width="2" stroke-linecap="round" stroke-opacity="0.5"/>
+            <path d="M52 38 Q56 28 50 20 T53 8" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-opacity="0.55"/>
+            <path d="M62 38 Q66 32 61 25 T63 15" fill="none" stroke="#0284c7" stroke-width="2" stroke-linecap="round" stroke-opacity="0.45"/>
+        </svg>
+    </div>
+
+    <!-- 2. Gourmet Burger -->
+    <div class="food-silhouette-item food-item-2">
+        <div class="food-silhouette-shadow"></div>
+        <svg viewBox="0 0 100 100" class="food-silhouette-svg">
+            <defs>
+                <linearGradient id="foodGradBurger" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#00f2fe" stop-opacity="0.9"/>
+                    <stop offset="50%" stop-color="#0284c7" stop-opacity="0.45"/>
+                    <stop offset="100%" stop-color="#030717" stop-opacity="0.85"/>
+                </linearGradient>
+            </defs>
+            <path d="M20 44 C20 24 33 16 50 16 C67 16 80 24 80 44 Z" fill="url(#foodGradBurger)" stroke="#00f2fe" stroke-width="1.6" stroke-opacity="0.5"/>
+            <circle cx="38" cy="28" r="1.5" fill="#00f2fe" opacity="0.7"/>
+            <circle cx="50" cy="24" r="1.5" fill="#00f2fe" opacity="0.7"/>
+            <circle cx="62" cy="28" r="1.5" fill="#00f2fe" opacity="0.7"/>
+            <circle cx="44" cy="34" r="1.5" fill="#00f2fe" opacity="0.7"/>
+            <circle cx="56" cy="34" r="1.5" fill="#00f2fe" opacity="0.7"/>
+            <path d="M16 48 Q22 45 28 48 T40 48 T52 48 T64 48 T76 48 T84 48" fill="none" stroke="#00f2fe" stroke-width="3" stroke-linecap="round" stroke-opacity="0.65"/>
+            <polygon points="26,53 74,53 68,64 56,58 48,66 40,58 32,63" fill="#38bdf8" opacity="0.55"/>
+            <rect x="20" y="55" width="60" height="12" rx="6" fill="url(#foodGradBurger)" stroke="#0284c7" stroke-width="1.4" stroke-opacity="0.55"/>
+            <path d="M22 71 C22 71 22 84 35 84 L65 84 C78 84 78 71 78 71 Z" fill="url(#foodGradBurger)" stroke="#00f2fe" stroke-width="1.6" stroke-opacity="0.5"/>
+        </svg>
+    </div>
+
+    <!-- 3. Pizza Slice -->
+    <div class="food-silhouette-item food-item-3">
+        <div class="food-silhouette-shadow"></div>
+        <svg viewBox="0 0 100 100" class="food-silhouette-svg">
+            <defs>
+                <linearGradient id="foodGradPizza" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#00f2fe" stop-opacity="0.9"/>
+                    <stop offset="55%" stop-color="#0284c7" stop-opacity="0.45"/>
+                    <stop offset="100%" stop-color="#030717" stop-opacity="0.85"/>
+                </linearGradient>
+            </defs>
+            <path d="M22 22 Q50 14 78 22 Q76 28 72 29 Q50 22 28 29 Q24 28 22 22 Z" fill="#00f2fe" opacity="0.75"/>
+            <path d="M26 28 Q50 22 74 28 L52 86 Q50 90 48 86 Z" fill="url(#foodGradPizza)" stroke="#00f2fe" stroke-width="1.6" stroke-opacity="0.5"/>
+            <circle cx="48" cy="40" r="5" fill="#0284c7" stroke="#00f2fe" stroke-width="1.3" opacity="0.75"/>
+            <circle cx="38" cy="56" r="4.5" fill="#0284c7" stroke="#00f2fe" stroke-width="1.3" opacity="0.75"/>
+            <circle cx="58" cy="54" r="5" fill="#0284c7" stroke="#00f2fe" stroke-width="1.3" opacity="0.75"/>
+            <circle cx="49" cy="70" r="3.5" fill="#0284c7" stroke="#00f2fe" stroke-width="1.3" opacity="0.75"/>
+        </svg>
+    </div>
+
+    <!-- 4. Cold Drink / Boba Cup -->
+    <div class="food-silhouette-item food-item-4">
+        <div class="food-silhouette-shadow"></div>
+        <svg viewBox="0 0 100 100" class="food-silhouette-svg">
+            <defs>
+                <linearGradient id="foodGradDrink" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#00f2fe" stop-opacity="0.9"/>
+                    <stop offset="50%" stop-color="#0284c7" stop-opacity="0.45"/>
+                    <stop offset="100%" stop-color="#030717" stop-opacity="0.85"/>
+                </linearGradient>
+            </defs>
+            <path d="M54 10 L64 10 L48 42 L42 42 Z" fill="#00f2fe" opacity="0.8"/>
+            <path d="M30 36 C30 30 70 30 70 36 Z" fill="#38bdf8" opacity="0.65"/>
+            <rect x="28" y="36" width="44" height="4" rx="2" fill="#00f2fe" opacity="0.85"/>
+            <path d="M31 40 L38 84 C39 88 43 90 47 90 L53 90 C57 90 61 88 62 84 L69 40 Z" fill="url(#foodGradDrink)" stroke="#00f2fe" stroke-width="1.6" stroke-opacity="0.5"/>
+            <circle cx="44" cy="78" r="3.5" fill="#00f2fe" opacity="0.65"/>
+            <circle cx="56" cy="78" r="3.5" fill="#00f2fe" opacity="0.65"/>
+            <circle cx="50" cy="72" r="3.5" fill="#38bdf8" opacity="0.65"/>
+            <circle cx="42" cy="66" r="3" fill="#00f2fe" opacity="0.55"/>
+            <circle cx="58" cy="66" r="3" fill="#00f2fe" opacity="0.55"/>
+        </svg>
+    </div>
+
+    <!-- 5. Food Cloche / Dome Platter -->
+    <div class="food-silhouette-item food-item-5">
+        <div class="food-silhouette-shadow"></div>
+        <svg viewBox="0 0 100 100" class="food-silhouette-svg">
+            <defs>
+                <linearGradient id="foodGradCloche" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#00f2fe" stop-opacity="0.9"/>
+                    <stop offset="60%" stop-color="#0284c7" stop-opacity="0.45"/>
+                    <stop offset="100%" stop-color="#030717" stop-opacity="0.85"/>
+                </linearGradient>
+            </defs>
+            <circle cx="50" cy="24" r="5" fill="#00f2fe" opacity="0.9"/>
+            <rect x="48" y="28" width="4" height="6" rx="2" fill="#00f2fe" opacity="0.75"/>
+            <path d="M22 66 C22 38 35 34 50 34 C65 34 78 38 78 66 Z" fill="url(#foodGradCloche)" stroke="#00f2fe" stroke-width="1.6" stroke-opacity="0.5"/>
+            <line x1="20" y1="66" x2="80" y2="66" stroke="#00f2fe" stroke-width="2.2" stroke-linecap="round" stroke-opacity="0.75"/>
+            <rect x="14" y="69" width="72" height="5" rx="2.5" fill="url(#foodGradCloche)" stroke="#38bdf8" stroke-width="1.3" stroke-opacity="0.55"/>
+            <path d="M28 28 L30 22 L32 28 L38 30 L32 32 L30 38 L28 32 L22 30 Z" fill="#00f2fe" opacity="0.55"/>
+            <path d="M72 32 L73.5 27 L75 32 L80 33.5 L75 35 L73.5 40 L72 35 L67 33.5 Z" fill="#38bdf8" opacity="0.5"/>
+        </svg>
+    </div>
+
+    <!-- 6. Crossed Cutlery (Fork & Spoon) -->
+    <div class="food-silhouette-item food-item-6">
+        <div class="food-silhouette-shadow"></div>
+        <svg viewBox="0 0 100 100" class="food-silhouette-svg">
+            <defs>
+                <linearGradient id="foodGradCutlery" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#00f2fe" stop-opacity="0.9"/>
+                    <stop offset="60%" stop-color="#0284c7" stop-opacity="0.45"/>
+                    <stop offset="100%" stop-color="#030717" stop-opacity="0.85"/>
+                </linearGradient>
+            </defs>
+            <g transform="rotate(45 50 50)">
+                <path d="M38 18 L38 32 C38 38 46 40 48 42 L48 82 C48 84 50 84 50 84 C50 84 52 84 52 82 L52 42 C54 40 62 38 62 32 L62 18 L58 18 L58 30 L54 30 L54 18 L50 18 L50 30 L46 30 L46 18 Z" fill="url(#foodGradCutlery)" stroke="#00f2fe" stroke-width="1.3" stroke-opacity="0.55"/>
+            </g>
+            <g transform="rotate(-45 50 50)">
+                <path d="M42 28 C42 18 58 18 58 28 C58 38 52 42 52 82 C52 84 50 84 50 84 C50 84 48 84 48 82 C48 42 42 38 42 28 Z" fill="url(#foodGradCutlery)" stroke="#38bdf8" stroke-width="1.3" stroke-opacity="0.55"/>
+            </g>
+        </svg>
+    </div>
+
+    <!-- 7. Warm Coffee / Tea Cup -->
+    <div class="food-silhouette-item food-item-7">
+        <div class="food-silhouette-shadow"></div>
+        <svg viewBox="0 0 100 100" class="food-silhouette-svg">
+            <defs>
+                <linearGradient id="foodGradCoffee" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#00f2fe" stop-opacity="0.9"/>
+                    <stop offset="60%" stop-color="#0284c7" stop-opacity="0.45"/>
+                    <stop offset="100%" stop-color="#030717" stop-opacity="0.85"/>
+                </linearGradient>
+            </defs>
+            <path d="M26 40 L30 76 C31 82 37 86 44 86 L56 86 C63 86 69 82 70 76 L74 40 Z" fill="url(#foodGradCoffee)" stroke="#00f2fe" stroke-width="1.6" stroke-opacity="0.5"/>
+            <path d="M72 46 C82 46 84 62 71 66" fill="none" stroke="#00f2fe" stroke-width="3.5" stroke-linecap="round" stroke-opacity="0.65"/>
+            <path d="M40 32 Q36 24 41 18 T39 8" fill="none" stroke="#00f2fe" stroke-width="2" stroke-linecap="round" stroke-opacity="0.55"/>
+            <path d="M50 32 Q54 22 49 15 T51 5" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-opacity="0.6"/>
+            <path d="M60 32 Q64 26 59 20 T61 10" fill="none" stroke="#0284c7" stroke-width="2" stroke-linecap="round" stroke-opacity="0.5"/>
+        </svg>
+    </div>
+
+    <!-- 8. Dimsum / Dumpling in Steamer -->
+    <div class="food-silhouette-item food-item-8">
+        <div class="food-silhouette-shadow"></div>
+        <svg viewBox="0 0 100 100" class="food-silhouette-svg">
+            <defs>
+                <linearGradient id="foodGradDimsum" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#00f2fe" stop-opacity="0.9"/>
+                    <stop offset="50%" stop-color="#0284c7" stop-opacity="0.45"/>
+                    <stop offset="100%" stop-color="#030717" stop-opacity="0.85"/>
+                </linearGradient>
+            </defs>
+            <path d="M20 62 C20 40 40 34 50 34 C60 34 80 40 80 62 C80 72 65 74 50 74 C35 74 20 72 20 62 Z" fill="url(#foodGradDimsum)" stroke="#00f2fe" stroke-width="1.6" stroke-opacity="0.5"/>
+            <path d="M50 34 L50 48" stroke="#00f2fe" stroke-width="1.8" stroke-linecap="round" stroke-opacity="0.65"/>
+            <path d="M40 37 L44 48" stroke="#38bdf8" stroke-width="1.8" stroke-linecap="round" stroke-opacity="0.55"/>
+            <path d="M60 37 L56 48" stroke="#38bdf8" stroke-width="1.8" stroke-linecap="round" stroke-opacity="0.55"/>
+            <path d="M32 44 L38 52" stroke="#0284c7" stroke-width="1.5" stroke-linecap="round" stroke-opacity="0.45"/>
+            <path d="M68 44 L62 52" stroke="#0284c7" stroke-width="1.5" stroke-linecap="round" stroke-opacity="0.45"/>
+            <path d="M46 26 Q43 20 47 16" fill="none" stroke="#00f2fe" stroke-width="1.8" stroke-linecap="round" stroke-opacity="0.45"/>
+            <path d="M54 26 Q57 19 53 14" fill="none" stroke="#38bdf8" stroke-width="1.8" stroke-linecap="round" stroke-opacity="0.5"/>
+        </svg>
+    </div>
+</div>
 
 <!-- Top Nav Bar -->
 <nav id="seller-nav" style="position:sticky; top:0; z-index:100; display:flex; justify-content:space-between; align-items:center; padding:1rem 2rem; background:rgba(3,7,23,0.9); backdrop-filter:blur(20px); border-bottom:1px solid rgba(0,242,254,0.15);">

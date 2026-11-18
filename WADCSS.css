@@ -323,6 +323,8 @@ button:active:not(:disabled),
 
 /* ── Chat Viewport ────────────────────────────────────────── */
 .chat-viewport {
+    position: relative;
+    z-index: 2;
     height: calc(100vh - 160px);
     max-width: 860px;
     margin: 0 auto;
@@ -1427,6 +1429,169 @@ button:active:not(:disabled),
     }
     .cart-footer-actions {
         flex-direction: column-reverse;
+    }
+}
+
+/* ── Futuristic Food Shadow Silhouettes Background ────────── */
+.food-silhouette-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.food-silhouette-item {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    will-change: transform;
+    opacity: 0.62;
+    transition: opacity 0.5s ease;
+}
+
+.food-silhouette-svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 14px 28px rgba(1, 4, 15, 0.95)) drop-shadow(0 0 16px rgba(0, 242, 254, 0.28));
+}
+
+.food-silhouette-shadow {
+    position: absolute;
+    width: 135%;
+    height: 135%;
+    top: -17.5%;
+    left: -17.5%;
+    background: radial-gradient(circle, rgba(0, 242, 254, 0.18) 0%, rgba(2, 132, 199, 0.12) 42%, rgba(3, 7, 23, 0.85) 75%, transparent 100%);
+    border-radius: 50%;
+    filter: blur(24px);
+    z-index: -1;
+    animation: shadowPulse 6s ease-in-out infinite alternate;
+}
+
+@keyframes shadowPulse {
+    0%   { transform: scale(0.9); opacity: 0.65; }
+    100% { transform: scale(1.1); opacity: 1; }
+}
+
+/* Individual Item Positioning & Animations */
+.food-item-1 {
+    top: 13%;
+    left: 3%;
+    width: 135px;
+    height: 135px;
+    animation: foodFloat1 20s ease-in-out infinite alternate;
+}
+.food-item-2 {
+    top: 18%;
+    right: 3.5%;
+    width: 130px;
+    height: 130px;
+    animation: foodFloat2 24s ease-in-out infinite alternate;
+}
+.food-item-3 {
+    top: 48%;
+    left: 4%;
+    width: 120px;
+    height: 120px;
+    animation: foodFloat3 19s ease-in-out infinite alternate;
+}
+.food-item-4 {
+    top: 52%;
+    right: 4%;
+    width: 125px;
+    height: 125px;
+    animation: foodFloat4 22s ease-in-out infinite alternate;
+}
+.food-item-5 {
+    bottom: 11%;
+    left: 3.5%;
+    width: 130px;
+    height: 130px;
+    animation: foodFloat5 26s ease-in-out infinite alternate;
+}
+.food-item-6 {
+    bottom: 12%;
+    right: 3.5%;
+    width: 120px;
+    height: 120px;
+    animation: foodFloat6 21s ease-in-out infinite alternate;
+}
+.food-item-7 {
+    top: 7%;
+    left: 35%;
+    width: 100px;
+    height: 100px;
+    opacity: 0.42;
+    animation: foodFloat7 25s ease-in-out infinite alternate;
+}
+.food-item-8 {
+    bottom: 5%;
+    left: 49%;
+    width: 105px;
+    height: 105px;
+    opacity: 0.42;
+    animation: foodFloat8 18s ease-in-out infinite alternate;
+}
+
+/* Floating Animations with Translation, Rotation, & Scale */
+@keyframes foodFloat1 {
+    0%   { transform: translate(0, 0) rotate(0deg) scale(1); }
+    50%  { transform: translate(28px, -24px) rotate(8deg) scale(1.06); }
+    100% { transform: translate(-18px, 18px) rotate(-5deg) scale(0.95); }
+}
+@keyframes foodFloat2 {
+    0%   { transform: translate(0, 0) rotate(0deg) scale(1); }
+    50%  { transform: translate(-26px, 28px) rotate(-9deg) scale(1.07); }
+    100% { transform: translate(20px, -22px) rotate(6deg) scale(0.96); }
+}
+@keyframes foodFloat3 {
+    0%   { transform: translate(0, 0) rotate(0deg) scale(1); }
+    50%  { transform: translate(24px, 24px) rotate(-7deg) scale(1.05); }
+    100% { transform: translate(-20px, -26px) rotate(8deg) scale(0.97); }
+}
+@keyframes foodFloat4 {
+    0%   { transform: translate(0, 0) rotate(0deg) scale(1); }
+    50%  { transform: translate(-24px, -26px) rotate(9deg) scale(1.06); }
+    100% { transform: translate(22px, 28px) rotate(-6deg) scale(0.95); }
+}
+@keyframes foodFloat5 {
+    0%   { transform: translate(0, 0) rotate(0deg) scale(1); }
+    50%  { transform: translate(26px, -20px) rotate(-8deg) scale(1.05); }
+    100% { transform: translate(-16px, 24px) rotate(7deg) scale(0.96); }
+}
+@keyframes foodFloat6 {
+    0%   { transform: translate(0, 0) rotate(0deg) scale(1); }
+    50%  { transform: translate(-22px, 24px) rotate(8deg) scale(1.06); }
+    100% { transform: translate(18px, -24px) rotate(-7deg) scale(0.95); }
+}
+@keyframes foodFloat7 {
+    0%   { transform: translate(0, 0) rotate(0deg) scale(1); }
+    50%  { transform: translate(-18px, 16px) rotate(-6deg) scale(1.04); }
+    100% { transform: translate(20px, -18px) rotate(7deg) scale(0.96); }
+}
+@keyframes foodFloat8 {
+    0%   { transform: translate(0, 0) rotate(0deg) scale(1); }
+    50%  { transform: translate(20px, -18px) rotate(7deg) scale(1.05); }
+    100% { transform: translate(-16px, 20px) rotate(-6deg) scale(0.95); }
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .food-silhouette-item {
+        opacity: 0.38;
+    }
+    .food-item-1, .food-item-2, .food-item-3, .food-item-4,
+    .food-item-5, .food-item-6 {
+        transform: scale(0.72);
+    }
+    .food-item-7, .food-item-8 {
+        display: none;
     }
 }
 
