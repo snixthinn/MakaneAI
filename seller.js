@@ -270,6 +270,13 @@ function renderActionButtons(order) {
       💬
     </button>`;
 
+  // Always offer Print Receipt button
+  html += `
+    <button type="button" onclick="openReceiptModal('${orderId}')"
+      class="action-btn-receipt" title="Lihat & Print Struk">
+      🧾
+    </button>`;
+
   if (norm === "pending") {
     html += `
       <button type="button" onclick="rejectOrder('${orderId}')"
@@ -309,6 +316,311 @@ function renderActionButtons(order) {
   html += `</div>`;
   return html;
 }
+
+// ── Receipt / Struk Pembayaran ────────────────────────────
+window.openReceiptModal = function(orderId) {
+  const order = window.activeOrders[orderId];
+  if (!order) { alert("Data order tidak ditemukan."); return; }
+
+  const modal = document.getElementById("receiptModal");
+  if (!modal) return;
+
+  // Populate receipt content
+  _buildReceiptHTML(order);
+  modal.classList.remove("hidden");
+};
+
+window.closeReceiptModal = function() {
+  const modal = document.getElementById("receiptModal");
+  if (modal) modal.classList.add("hidden");
+};
+
+function _buildReceiptHTML(order) {
+  const now = new Date();
+  const dateStr = now.toLocaleDateString("id-ID", {
+    weekday: "long", year: "numeric", month: "long", day: "numeric"
+  });
+  const timeStr = now.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+
+  const orderId     = (order.id || "").slice(-8).toUpperCase();
+  const items       = order.items || [];
+  const totalPrice  = order.totalPrice || items.reduce((s, i) => s + ((i.price||0)*(i.quantity||1)), 0);
+  const address     = order.location?.address || "Tidak ada alamat";
+  const notes       = order.notes || order.location?.details || "";
+  const payMethod   = order.method || order.paymentMethod || "QRIS";
+  const customerName = (order.customerName || order.userName || "Pelanggan").trim();
+  const customerEmail= (order.customerEmail || order.userEmail || "");
+  const status      = order.status || "Processing";
+
+  // Prepare order timestamp
+  let orderTimestamp = "";
+  if (order.timestamp) {
+    const ts = order.timestamp.toDate ? order.timestamp.toDate() : new Date((order.timestamp.seconds||0)*1000);
+    orderTimestamp = ts.toLocaleString("id-ID", { day:"numeric", month:"short", year:"numeric", hour:"2-digit", minute:"2-digit" });
+  } else {
+    orderTimestamp = dateStr;
+  }
+
+  const subtotal   = items.reduce((s, i) => s + ((i.price||0)*(i.quantity||1)), 0);
+  const taxRate    = 0; // Jika ada pajak, ubah di sini
+  const taxAmount  = Math.round(subtotal * taxRate);
+  const grandTotal = subtotal + taxAmount;
+
+  // Status label
+  const statusLabels = {
+    pending: "⏳ Menunggu Konfirmasi",
+    preparing: "👨‍🍳 Sedang Disiapkan",
+    ontheway: "🛵 Dalam Pengiriman",
+    completed: "✅ Selesai / Terkirim",
+    rejected: "❌ Dibatalkan"
+  };
+  const normStatus = normalizeOrderStatus(status);
+  const statusLabel = statusLabels[normStatus] || status;
+
+  // Build items rows
+  const itemsHTML = items.length > 0
+    ? items.map(item => {
+        const subtotalItem = (item.price||0) * (item.quantity||1);
+        return `
+          <tr class="receipt-item-row">
+            <td class="receipt-td-name">${item.emoji||"🍽️"} ${item.name}</td>
+            <td class="receipt-td-qty">${item.quantity}x</td>
+            <td class="receipt-td-price">Rp ${(item.price||0).toLocaleString("id-ID")}</td>
+            <td class="receipt-td-subtotal">Rp ${subtotalItem.toLocaleString("id-ID")}</td>
+          </tr>`;
+      }).join("")
+    : `<tr><td colspan="4" style="text-align:center; color:#999; padding:8px 0; font-style:italic;">Tidak ada item</td></tr>`;
+
+  const receiptHTML = `
+    <div class="receipt-wrapper" id="receipt-printable">
+      <!-- Store Header -->
+      <div class="receipt-store-header">
+        <div class="receipt-logo-text">🍽️ makan.ai</div>
+        <div class="receipt-store-tagline">Platform Pesan Makan Online</div>
+        <div class="receipt-store-contact">support@makan.ai · makan.ai</div>
+        <div class="receipt-divider-dashed"></div>
+      </div>
+
+      <!-- Receipt Title -->
+      <div class="receipt-title-block">
+        <span class="receipt-title-label">STRUK PEMBAYARAN</span>
+        <div class="receipt-order-id">#${orderId}</div>
+      </div>
+
+      <div class="receipt-divider-dashed"></div>
+
+      <!-- Order Info -->
+      <table class="receipt-info-table">
+        <tr>
+          <td class="receipt-info-label">Tanggal Order</td>
+          <td class="receipt-info-colon">:</td>
+          <td class="receipt-info-value">${orderTimestamp}</td>
+        </tr>
+        <tr>
+          <td class="receipt-info-label">Tanggal Cetak</td>
+          <td class="receipt-info-colon">:</td>
+          <td class="receipt-info-value">${dateStr}</td>
+        </tr>
+        <tr>
+          <td class="receipt-info-label">Waktu Cetak</td>
+          <td class="receipt-info-colon">:</td>
+          <td class="receipt-info-value">${timeStr}</td>
+        </tr>
+        <tr>
+          <td class="receipt-info-label">Pelanggan</td>
+          <td class="receipt-info-colon">:</td>
+          <td class="receipt-info-value">${customerName}${customerEmail ? ` (${customerEmail})` : ""}</td>
+        </tr>
+        <tr>
+          <td class="receipt-info-label">Alamat</td>
+          <td class="receipt-info-colon">:</td>
+          <td class="receipt-info-value">${address}</td>
+        </tr>
+        ${notes ? `
+        <tr>
+          <td class="receipt-info-label">Catatan</td>
+          <td class="receipt-info-colon">:</td>
+          <td class="receipt-info-value receipt-notes-val">${notes}</td>
+        </tr>` : ""}
+        <tr>
+          <td class="receipt-info-label">Pembayaran</td>
+          <td class="receipt-info-colon">:</td>
+          <td class="receipt-info-value"><strong>${payMethod}</strong></td>
+        </tr>
+        <tr>
+          <td class="receipt-info-label">Status</td>
+          <td class="receipt-info-colon">:</td>
+          <td class="receipt-info-value"><strong>${statusLabel}</strong></td>
+        </tr>
+      </table>
+
+      <div class="receipt-divider-dashed"></div>
+
+      <!-- Items Table -->
+      <div class="receipt-items-title">DETAIL PESANAN</div>
+      <table class="receipt-items-table">
+        <thead>
+          <tr class="receipt-items-thead">
+            <th class="receipt-th-name">Item</th>
+            <th class="receipt-th-qty">Qty</th>
+            <th class="receipt-th-price">Harga</th>
+            <th class="receipt-th-subtotal">Subtotal</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${itemsHTML}
+        </tbody>
+      </table>
+
+      <div class="receipt-divider-dashed"></div>
+
+      <!-- Totals -->
+      <table class="receipt-totals-table">
+        <tr>
+          <td class="receipt-total-label">Subtotal</td>
+          <td class="receipt-total-value">Rp ${subtotal.toLocaleString("id-ID")}</td>
+        </tr>
+        ${taxAmount > 0 ? `
+        <tr>
+          <td class="receipt-total-label">Pajak (${taxRate*100}%)</td>
+          <td class="receipt-total-value">Rp ${taxAmount.toLocaleString("id-ID")}</td>
+        </tr>` : ""}
+        <tr>
+          <td class="receipt-total-label">Ongkos Kirim</td>
+          <td class="receipt-total-value">Rp 0</td>
+        </tr>
+      </table>
+
+      <div class="receipt-grand-total-row">
+        <span class="receipt-grand-label">TOTAL</span>
+        <span class="receipt-grand-amount">Rp ${grandTotal.toLocaleString("id-ID")}</span>
+      </div>
+
+      <div class="receipt-payment-row">
+        <span>Metode Bayar</span>
+        <span><strong>${payMethod}</strong></span>
+      </div>
+
+      <div class="receipt-divider-dashed"></div>
+
+      <!-- Footer -->
+      <div class="receipt-footer">
+        <div class="receipt-footer-emoji">🙏</div>
+        <div class="receipt-footer-thanks">Terima kasih atas pesanan Anda!</div>
+        <div class="receipt-footer-sub">Makanan lezat, pelayanan terbaik.</div>
+        <div class="receipt-footer-brand">— makan.ai —</div>
+        <div class="receipt-barcode-visual">
+          ||||| || ||||| | || ||||| || ||| ||||
+        </div>
+        <div class="receipt-barcode-num">${orderId}</div>
+      </div>
+    </div>
+  `;
+
+  const container = document.getElementById("receipt-content-area");
+  if (container) container.innerHTML = receiptHTML;
+}
+
+window.printReceipt = function() {
+  const printContent = document.getElementById("receipt-printable");
+  if (!printContent) return;
+
+  const printWindow = window.open("", "_blank", "width=420,height=700");
+  printWindow.document.write(`
+    <!DOCTYPE html>
+    <html lang="id">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      <title>Struk Pembayaran - makan.ai</title>
+      <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+          font-family: 'Courier New', Courier, monospace;
+          background: #fff;
+          color: #111;
+          font-size: 13px;
+          padding: 0;
+        }
+        .receipt-wrapper {
+          width: 320px;
+          margin: 0 auto;
+          padding: 18px 16px;
+          background: #fff;
+        }
+        /* Store Header */
+        .receipt-store-header { text-align: center; margin-bottom: 10px; }
+        .receipt-logo-text { font-size: 20px; font-weight: 900; letter-spacing: -0.5px; margin-bottom: 2px; }
+        .receipt-store-tagline { font-size: 10px; color: #555; margin-bottom: 2px; }
+        .receipt-store-contact { font-size: 9px; color: #888; }
+        /* Title */
+        .receipt-title-block { text-align: center; margin: 8px 0; }
+        .receipt-title-label { font-size: 11px; font-weight: 900; letter-spacing: 2px; display: block; }
+        .receipt-order-id { font-size: 18px; font-weight: 900; letter-spacing: 1px; margin-top: 2px; }
+        /* Dividers */
+        .receipt-divider-dashed { border: none; border-top: 1px dashed #bbb; margin: 8px 0; }
+        /* Info table */
+        .receipt-info-table { width: 100%; border-collapse: collapse; font-size: 11px; margin: 4px 0; }
+        .receipt-info-label { color: #555; padding: 2px 0; vertical-align: top; white-space: nowrap; width: 95px; }
+        .receipt-info-colon { padding: 2px 4px; vertical-align: top; }
+        .receipt-info-value { color: #111; padding: 2px 0; vertical-align: top; word-break: break-word; }
+        .receipt-notes-val { font-style: italic; color: #555; }
+        /* Items */
+        .receipt-items-title { font-weight: 900; font-size: 10px; letter-spacing: 1.5px; text-align: center; margin: 6px 0 4px; }
+        .receipt-items-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+        .receipt-items-thead th { border-bottom: 1px solid #ccc; padding: 3px 0; font-weight: 900; font-size: 10px; text-align: left; }
+        .receipt-th-name { width: 44%; }
+        .receipt-th-qty { width: 10%; text-align: center; }
+        .receipt-th-price { width: 22%; text-align: right; }
+        .receipt-th-subtotal { width: 24%; text-align: right; }
+        .receipt-item-row td { padding: 3px 0; vertical-align: top; }
+        .receipt-td-name { }
+        .receipt-td-qty { text-align: center; }
+        .receipt-td-price { text-align: right; white-space: nowrap; }
+        .receipt-td-subtotal { text-align: right; white-space: nowrap; font-weight: 700; }
+        /* Totals */
+        .receipt-totals-table { width: 100%; border-collapse: collapse; font-size: 11px; margin: 4px 0; }
+        .receipt-totals-table tr td { padding: 2px 0; }
+        .receipt-total-label { color: #555; }
+        .receipt-total-value { text-align: right; }
+        /* Grand total */
+        .receipt-grand-total-row {
+          display: flex; justify-content: space-between; align-items: center;
+          border-top: 2px solid #111; border-bottom: 2px solid #111;
+          margin: 6px 0; padding: 5px 0; font-weight: 900; font-size: 15px;
+        }
+        .receipt-payment-row {
+          display: flex; justify-content: space-between; font-size: 11px; color: #555; margin-top: 4px;
+        }
+        /* Footer */
+        .receipt-footer { text-align: center; margin-top: 10px; }
+        .receipt-footer-emoji { font-size: 18px; }
+        .receipt-footer-thanks { font-weight: 900; font-size: 12px; margin-top: 4px; }
+        .receipt-footer-sub { font-size: 10px; color: #777; margin-top: 2px; }
+        .receipt-footer-brand { font-size: 11px; font-weight: 700; margin-top: 4px; letter-spacing: 1px; }
+        .receipt-barcode-visual {
+          font-family: 'Courier New', monospace; font-size: 9px; letter-spacing: 2px;
+          margin-top: 10px; color: #333; word-spacing: -2px;
+        }
+        .receipt-barcode-num { font-size: 9px; color: #888; letter-spacing: 3px; margin-top: 2px; }
+        @media print {
+          body { background: #fff !important; }
+          .receipt-wrapper { width: 100%; }
+        }
+      </style>
+    </head>
+    <body>
+      ${printContent.outerHTML}
+    </body>
+    </html>
+  `);
+  printWindow.document.close();
+  printWindow.focus();
+  setTimeout(() => {
+    printWindow.print();
+    // printWindow.close(); // uncomment jika ingin auto close setelah print
+  }, 400);
+};
 
 window.toggleCustomerGroup = function(customerKey) {
   const current = window.customerAccordionState[customerKey] !== false; // default true

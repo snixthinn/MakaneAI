@@ -637,6 +637,46 @@
         </div>
     </div>
 
+    <!-- ══════════════════════════════════════════════
+         RECEIPT / STRUK PEMBAYARAN MODAL
+    ═══════════════════════════════════════════════ -->
+    <div id="receiptModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-[300]" onclick="if(event.target===this)closeReceiptModal()">
+        <div style="background:#fff; border-radius:16px; width:100%; max-width:440px; max-height:92vh; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 24px 80px rgba(0,0,0,0.7); animation:slideUp 0.3s cubic-bezier(0.16,1,0.3,1) forwards;">
+
+            <!-- Modal Header (dark bar) -->
+            <div style="background:linear-gradient(135deg,#030717,#071228); padding:1rem 1.25rem; display:flex; justify-content:space-between; align-items:center; flex-shrink:0; border-bottom:1px solid rgba(0,242,254,0.2);">
+                <div>
+                    <h2 style="font-size:0.95rem; font-weight:800; color:#00f2fe; margin:0;">🧾 Struk Pembayaran</h2>
+                    <p style="font-size:0.65rem; color:rgba(255,255,255,0.4); margin-top:2px;">Pratinjau struk sebelum mencetak</p>
+                </div>
+                <button onclick="closeReceiptModal()" style="color:rgba(255,255,255,0.6); background:rgba(255,255,255,0.08); border:none; border-radius:8px; width:30px; height:30px; cursor:pointer; font-size:1rem; display:flex; align-items:center; justify-content:center;" onmouseover="this.style.background='rgba(255,255,255,0.15)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">✕</button>
+            </div>
+
+            <!-- Receipt Preview Area (scrollable) -->
+            <div id="receipt-content-area" style="flex:1; overflow-y:auto; background:#f5f5f0; padding:1.5rem 1.25rem;">
+                <!-- Populated by JS -->
+            </div>
+
+            <!-- Footer Buttons -->
+            <div style="padding:0.9rem 1.25rem; background:#fff; border-top:1px solid #e5e7eb; display:flex; gap:0.75rem; flex-shrink:0;">
+                <button onclick="closeReceiptModal()"
+                    style="flex:1; padding:0.65rem; border-radius:10px; border:1px solid #d1d5db; background:#fff; color:#374151; font-size:0.8rem; font-weight:700; cursor:pointer; transition:all 0.2s;"
+                    onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='#fff'">
+                    Tutup
+                </button>
+                <button onclick="printReceipt()"
+                    style="flex:2; padding:0.65rem; border-radius:10px; border:none; background:linear-gradient(135deg,#0284c7,#00f2fe); color:#030717; font-size:0.82rem; font-weight:900; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:7px; box-shadow:0 4px 16px rgba(0,242,254,0.35); transition:all 0.2s;"
+                    onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 8px 24px rgba(0,242,254,0.5)'"
+                    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 16px rgba(0,242,254,0.35)'">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>
+                    </svg>
+                    Print / Simpan PDF
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Chat Inbox Panel (Slide-in from Right) -->
     <div id="chatInboxPanel" class="hidden fixed inset-0 z-[200]" onclick="closeChatInboxOnBg(event)">
         <div id="chatInboxPanelInner" style="position:fixed; top:0; right:0; height:100vh; width:100%; max-width:420px; background:#050c1e; border-left:1px solid rgba(0,242,254,0.15); display:flex; flex-direction:column; box-shadow:-8px 0 40px rgba(0,0,0,0.8); transform:translateX(100%); transition:transform 0.35s cubic-bezier(0.4,0,0.2,1);">

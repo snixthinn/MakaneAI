@@ -1477,3 +1477,221 @@ body,
         transition-duration: 0.01ms !important;
     }
 }
+
+
+/* ══════════════════════════════════════════════════════════
+   RECEIPT / STRUK BUTTON & MODAL STYLES
+   ══════════════════════════════════════════════════════════ */
+
+/* ── Print Receipt Action Button ───────────────────────── */
+.action-btn-receipt {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+    border: 1px solid rgba(167, 139, 250, 0.4);
+    background: rgba(139, 92, 246, 0.12);
+    color: #a78bfa;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.action-btn-receipt:hover {
+    background: rgba(139, 92, 246, 0.25);
+    border-color: rgba(167, 139, 250, 0.7);
+    box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.1);
+    transform: translateY(-1px);
+}
+
+/* ══════════════════════════════════════════════════════════
+   RECEIPT PRINTABLE STYLES (in-modal preview)
+   ══════════════════════════════════════════════════════════ */
+
+/* Wrapper */
+.receipt-wrapper {
+    width: 100%;
+    max-width: 320px;
+    margin: 0 auto;
+    padding: 18px 16px;
+    background: #ffffff;
+    font-family: 'Courier New', Courier, monospace;
+    color: #111;
+    font-size: 13px;
+    border-radius: 4px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+}
+
+/* Store Header */
+.receipt-store-header {
+    text-align: center;
+    margin-bottom: 10px;
+}
+.receipt-logo-text {
+    font-size: 20px;
+    font-weight: 900;
+    letter-spacing: -0.5px;
+    margin-bottom: 2px;
+    font-family: 'Courier New', monospace;
+}
+.receipt-store-tagline {
+    font-size: 10px;
+    color: #555;
+    margin-bottom: 2px;
+}
+.receipt-store-contact {
+    font-size: 9px;
+    color: #888;
+}
+
+/* Receipt Title */
+.receipt-title-block {
+    text-align: center;
+    margin: 8px 0;
+}
+.receipt-title-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+.receipt-order-id {
+    font-size: 20px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    margin-top: 2px;
+}
+
+/* Dashed Divider */
+.receipt-divider-dashed {
+    border: none;
+    border-top: 1px dashed #bbb;
+    margin: 8px 0;
+}
+
+/* Info Table */
+.receipt-info-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+    margin: 4px 0;
+}
+.receipt-info-label {
+    color: #555;
+    padding: 2px 0;
+    vertical-align: top;
+    white-space: nowrap;
+    width: 90px;
+}
+.receipt-info-colon {
+    padding: 2px 4px;
+    vertical-align: top;
+    color: #888;
+}
+.receipt-info-value {
+    color: #111;
+    padding: 2px 0;
+    vertical-align: top;
+    word-break: break-word;
+}
+.receipt-notes-val {
+    font-style: italic;
+    color: #555;
+}
+
+/* Items Section */
+.receipt-items-title {
+    font-weight: 900;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-align: center;
+    margin: 6px 0 4px;
+    text-transform: uppercase;
+}
+.receipt-items-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+}
+.receipt-items-thead th {
+    border-bottom: 1px solid #ccc;
+    padding: 3px 0;
+    font-weight: 900;
+    font-size: 10px;
+    text-align: left;
+    text-transform: uppercase;
+}
+.receipt-th-name    { width: 44%; }
+.receipt-th-qty     { width: 10%; text-align: center; }
+.receipt-th-price   { width: 22%; text-align: right; }
+.receipt-th-subtotal{ width: 24%; text-align: right; }
+
+.receipt-item-row td { padding: 3px 0; vertical-align: top; }
+.receipt-td-qty     { text-align: center; }
+.receipt-td-price   { text-align: right; white-space: nowrap; }
+.receipt-td-subtotal{ text-align: right; white-space: nowrap; font-weight: 700; }
+
+/* Totals */
+.receipt-totals-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+    margin: 4px 0;
+}
+.receipt-totals-table td { padding: 2px 0; }
+.receipt-total-label { color: #555; }
+.receipt-total-value { text-align: right; }
+
+/* Grand Total Row */
+.receipt-grand-total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 2px solid #111;
+    border-bottom: 2px solid #111;
+    margin: 6px 0;
+    padding: 6px 0;
+    font-weight: 900;
+    font-size: 15px;
+}
+.receipt-grand-label  { }
+.receipt-grand-amount { }
+
+.receipt-payment-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: #666;
+    margin-top: 4px;
+}
+
+/* Footer */
+.receipt-footer {
+    text-align: center;
+    margin-top: 12px;
+}
+.receipt-footer-emoji  { font-size: 18px; margin-bottom: 4px; }
+.receipt-footer-thanks { font-weight: 900; font-size: 12px; }
+.receipt-footer-sub    { font-size: 10px; color: #777; margin-top: 3px; }
+.receipt-footer-brand  { font-size: 11px; font-weight: 700; margin-top: 5px; letter-spacing: 1px; }
+
+.receipt-barcode-visual {
+    font-family: 'Courier New', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    margin-top: 10px;
+    color: #333;
+    word-spacing: -2px;
+    line-height: 1.4;
+}
+.receipt-barcode-num {
+    font-size: 9px;
+    color: #888;
+    letter-spacing: 3px;
+    margin-top: 2px;
+}
