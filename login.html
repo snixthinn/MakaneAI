@@ -763,9 +763,9 @@ async function handleLogin(e) {
 
             setLoading('login-btn', false, 'Sign In');
             if (role === 'seller') {
-                showMsg('login-error', '❌ Akun Seller tidak ditemukan. Hubungi administrator.');
+                showMsg('login-error', '❌ Seller account not found. Please contact the administrator.');
             } else {
-                showMsg('login-error', '❌ Akun tidak ditemukan. Silakan klik "Create Account" untuk mendaftar.');
+                showMsg('login-error', '❌ Account not found. Please click "Create Account" to sign up.');
             }
             return;
         }
@@ -776,7 +776,7 @@ async function handleLogin(e) {
 
         if (userDoc.password !== password) {
             setLoading('login-btn', false, 'Sign In');
-            showMsg('login-error', '❌ Password salah. Silakan coba lagi.');
+            showMsg('login-error', '❌ Incorrect password. Please try again.');
             return;
         }
 
@@ -790,7 +790,7 @@ async function handleLogin(e) {
         localStorage.setItem('makan_user', JSON.stringify(sessionUser));
 
         const targetRole = userDoc.role || role;
-        showMsg('login-success', `✅ Login berhasil! Mengalihkan ke ${targetRole === 'seller' ? 'Seller Dashboard' : 'Menu'}...`);
+        showMsg('login-success', `✅ Login successful! Redirecting to ${targetRole === 'seller' ? 'Seller Dashboard' : 'Menu'}...`);
         setTimeout(() => redirectByRole(targetRole), 900);
 
     } catch (err) {
@@ -814,16 +814,16 @@ async function handleRegister(e) {
 
     // Block seller registration on public login page
     if (role === 'seller') {
-        showMsg('register-error', '🔒 Akun seller (@admin.com) hanya dapat dibuat dari dalam Seller Dashboard.');
+        showMsg('register-error', '🔒 Seller accounts (@admin.com) can only be created from inside the Seller Dashboard.');
         return;
     }
 
     if (!name) {
-        showMsg('register-error', '❌ Silakan masukkan nama lengkap.');
+        showMsg('register-error', '❌ Please enter your full name.');
         return;
     }
     if (!email || !email.includes('@')) {
-        showMsg('register-error', '❌ Masukkan alamat email yang valid.');
+        showMsg('register-error', '❌ Please enter a valid email address.');
         return;
     }
     if (password.length < 6) {
@@ -831,7 +831,7 @@ async function handleRegister(e) {
         return;
     }
     if (password !== confirm) {
-        showMsg('register-error', '❌ Password dan Konfirmasi Password tidak cocok.');
+        showMsg('register-error', '❌ Password and Confirm Password do not match.');
         return;
     }
 
@@ -847,7 +847,7 @@ async function handleRegister(e) {
 
         if (!checkSnap.empty) {
             setLoading('register-btn', false, 'Create Account');
-            showMsg('register-error', '❌ Email ini sudah terdaftar. Silakan Sign In.');
+            showMsg('register-error', '❌ This email is already registered. Please Sign In.');
             return;
         }
 
@@ -871,7 +871,7 @@ async function handleRegister(e) {
         };
         localStorage.setItem('makan_user', JSON.stringify(sessionUser));
 
-        showMsg('register-success', '✅ Akun berhasil dibuat dan tersimpan di database! Mengalihkan...');
+        showMsg('register-success', '✅ Account created and saved to the database! Redirecting...');
         setTimeout(() => redirectByRole('buyer'), 1000);
 
     } catch (err) {

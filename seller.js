@@ -2,7 +2,7 @@
 import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
 import {
   getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc,
-  doc, onSnapshot, arrayUnion, query, orderBy
+  doc, onSnapshot, arrayUnion, query, orderBy, setDoc
 } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 import { firebaseConfig } from "./firebase-config.js";
 
@@ -22,7 +22,7 @@ function checkSellerAuth() {
   try {
     const user = JSON.parse(saved);
     if (user.role !== "seller" && !user.email.toLowerCase().endsWith("@admin.com")) {
-      alert("Akses ditolak! Halaman ini hanya untuk akun Seller (@admin.com).");
+      alert("Access denied! This page is for Seller accounts (@admin.com) only.");
       window.location.href = "index.html";
       return null;
     }
@@ -62,7 +62,7 @@ window.saveNewMenu = async function() {
   const tags  = document.getElementById("newTags").value.split(",").map(t => t.trim());
 
   if (!name || isNaN(price) || isNaN(stock)) {
-    alert("Mohon isi semua field dengan benar!");
+    alert("Please fill in all fields correctly!");
     return;
   }
 
@@ -72,7 +72,7 @@ window.saveNewMenu = async function() {
       createdAt: Date.now()
     });
 
-    alert("Menu berhasil ditambahkan ke Firebase!");
+    alert("Menu item added to Firebase successfully!");
     window.toggleModal();
     // clear input
     document.getElementById("newName").value = "";
@@ -80,7 +80,7 @@ window.saveNewMenu = async function() {
     document.getElementById("newStock").value = "";
     loadInventory();
   } catch (err) {
-    alert("Gagal menambahkan menu: " + err.message);
+    alert("Failed to add menu item: " + err.message);
   }
 };
 
@@ -106,7 +106,7 @@ window.editStock = async function(id) {
     await updateDoc(doc(db, "products", id), { stock: newStock });
     loadInventory();
   } catch (err) {
-    alert("Gagal update stok: " + err.message);
+    alert("Failed to update stock: " + err.message);
   }
 };
 
@@ -114,14 +114,14 @@ window.deleteProduct = async function(id) {
   const item = menuData.find(m => m.id === id);
   if (!item) return;
 
-  const confirmed = confirm(`Hapus "${item.name}" dari menu?\n\nTindakan ini akan menghapus produk secara permanen dari database.`);
+  const confirmed = confirm(`Delete "${item.name}" from the menu?\n\nThis will permanently remove the product from the database.`);
   if (!confirmed) return;
 
   try {
     await deleteDoc(doc(db, "products", id));
     loadInventory();
   } catch (err) {
-    alert("Gagal menghapus produk: " + err.message);
+    alert("Failed to delete product: " + err.message);
   }
 };
 
@@ -156,7 +156,7 @@ function renderInventory() {
             </button>
             <button onclick="deleteProduct('${item.id}')"
               class="btn-delete-product"
-              title="Hapus ${item.name}">
+              title="Delete ${item.name}">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="3 6 5 6 21 6"></polyline>
                 <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
@@ -233,7 +233,7 @@ function formatOrderDate(timestamp) {
   if (diffMinutes < 1) return "Just now";
   if (diffMinutes < 60) return `${diffMinutes}m ago`;
   
-  return date.toLocaleString('id-ID', {
+  return date.toLocaleString('en-US', {
     day: 'numeric',
     month: 'short',
     hour: '2-digit',
@@ -273,7 +273,7 @@ function renderActionButtons(order) {
   // Always offer Print Receipt button
   html += `
     <button type="button" onclick="openReceiptModal('${orderId}')"
-      class="action-btn-receipt" title="Lihat & Print Struk">
+      class="action-btn-receipt" title="View & Print Receipt">
       🧾
     </button>`;
 
@@ -317,10 +317,10 @@ function renderActionButtons(order) {
   return html;
 }
 
-// ── Receipt / Struk Pembayaran ────────────────────────────
+// ── Receipt / Payment Slip ────────────────────────────
 window.openReceiptModal = function(orderId) {
   const order = window.activeOrders[orderId];
-  if (!order) { alert("Data order tidak ditemukan."); return; }
+  if (!order) { alert("Order data not found."); return; }
 
   const modal = document.getElementById("receiptModal");
   if (!modal) return;
@@ -337,18 +337,18 @@ window.closeReceiptModal = function() {
 
 function _buildReceiptHTML(order) {
   const now = new Date();
-  const dateStr = now.toLocaleDateString("id-ID", {
+  const dateStr = now.toLocaleDateString("en-US", {
     weekday: "long", year: "numeric", month: "long", day: "numeric"
   });
-  const timeStr = now.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+  const timeStr = now.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
 
   const orderId     = (order.id || "").slice(-8).toUpperCase();
   const items       = order.items || [];
   const totalPrice  = order.totalPrice || items.reduce((s, i) => s + ((i.price||0)*(i.quantity||1)), 0);
-  const address     = order.location?.address || "Tidak ada alamat";
+  const address     = order.location?.address || "No address";
   const notes       = order.notes || order.location?.details || "";
   const payMethod   = order.method || order.paymentMethod || "QRIS";
-  const customerName = (order.customerName || order.userName || "Pelanggan").trim();
+  const customerName = (order.customerName || order.userName || "Customer").trim();
   const customerEmail= (order.customerEmail || order.userEmail || "");
   const status      = order.status || "Processing";
 
@@ -356,23 +356,23 @@ function _buildReceiptHTML(order) {
   let orderTimestamp = "";
   if (order.timestamp) {
     const ts = order.timestamp.toDate ? order.timestamp.toDate() : new Date((order.timestamp.seconds||0)*1000);
-    orderTimestamp = ts.toLocaleString("id-ID", { day:"numeric", month:"short", year:"numeric", hour:"2-digit", minute:"2-digit" });
+    orderTimestamp = ts.toLocaleString("en-US", { day:"numeric", month:"short", year:"numeric", hour:"2-digit", minute:"2-digit" });
   } else {
     orderTimestamp = dateStr;
   }
 
   const subtotal   = items.reduce((s, i) => s + ((i.price||0)*(i.quantity||1)), 0);
-  const taxRate    = 0; // Jika ada pajak, ubah di sini
+  const taxRate    = 0; // Change here if tax applies
   const taxAmount  = Math.round(subtotal * taxRate);
   const grandTotal = subtotal + taxAmount;
 
   // Status label
   const statusLabels = {
-    pending: "⏳ Menunggu Konfirmasi",
-    preparing: "👨‍🍳 Sedang Disiapkan",
-    ontheway: "🛵 Dalam Pengiriman",
-    completed: "✅ Selesai / Terkirim",
-    rejected: "❌ Dibatalkan"
+    pending: "⏳ Awaiting Confirmation",
+    preparing: "👨‍🍳 Being Prepared",
+    ontheway: "🛵 On the Way",
+    completed: "✅ Completed / Delivered",
+    rejected: "❌ Cancelled"
   };
   const normStatus = normalizeOrderStatus(status);
   const statusLabel = statusLabels[normStatus] || status;
@@ -385,25 +385,25 @@ function _buildReceiptHTML(order) {
           <tr class="receipt-item-row">
             <td class="receipt-td-name">${item.emoji||"🍽️"} ${item.name}</td>
             <td class="receipt-td-qty">${item.quantity}x</td>
-            <td class="receipt-td-price">Rp ${(item.price||0).toLocaleString("id-ID")}</td>
-            <td class="receipt-td-subtotal">Rp ${subtotalItem.toLocaleString("id-ID")}</td>
+            <td class="receipt-td-price">Rp ${(item.price||0).toLocaleString("en-US")}</td>
+            <td class="receipt-td-subtotal">Rp ${subtotalItem.toLocaleString("en-US")}</td>
           </tr>`;
       }).join("")
-    : `<tr><td colspan="4" style="text-align:center; color:#999; padding:8px 0; font-style:italic;">Tidak ada item</td></tr>`;
+    : `<tr><td colspan="4" style="text-align:center; color:#999; padding:8px 0; font-style:italic;">No items</td></tr>`;
 
   const receiptHTML = `
     <div class="receipt-wrapper" id="receipt-printable">
       <!-- Store Header -->
       <div class="receipt-store-header">
         <div class="receipt-logo-text">🍽️ makan.ai</div>
-        <div class="receipt-store-tagline">Platform Pesan Makan Online</div>
+        <div class="receipt-store-tagline">Online Food Ordering Platform</div>
         <div class="receipt-store-contact">support@makan.ai · makan.ai</div>
         <div class="receipt-divider-dashed"></div>
       </div>
 
       <!-- Receipt Title -->
       <div class="receipt-title-block">
-        <span class="receipt-title-label">STRUK PEMBAYARAN</span>
+        <span class="receipt-title-label">PAYMENT RECEIPT</span>
         <div class="receipt-order-id">#${orderId}</div>
       </div>
 
@@ -412,38 +412,38 @@ function _buildReceiptHTML(order) {
       <!-- Order Info -->
       <table class="receipt-info-table">
         <tr>
-          <td class="receipt-info-label">Tanggal Order</td>
+          <td class="receipt-info-label">Order Date</td>
           <td class="receipt-info-colon">:</td>
           <td class="receipt-info-value">${orderTimestamp}</td>
         </tr>
         <tr>
-          <td class="receipt-info-label">Tanggal Cetak</td>
+          <td class="receipt-info-label">Print Date</td>
           <td class="receipt-info-colon">:</td>
           <td class="receipt-info-value">${dateStr}</td>
         </tr>
         <tr>
-          <td class="receipt-info-label">Waktu Cetak</td>
+          <td class="receipt-info-label">Print Time</td>
           <td class="receipt-info-colon">:</td>
           <td class="receipt-info-value">${timeStr}</td>
         </tr>
         <tr>
-          <td class="receipt-info-label">Pelanggan</td>
+          <td class="receipt-info-label">Customer</td>
           <td class="receipt-info-colon">:</td>
           <td class="receipt-info-value">${customerName}${customerEmail ? ` (${customerEmail})` : ""}</td>
         </tr>
         <tr>
-          <td class="receipt-info-label">Alamat</td>
+          <td class="receipt-info-label">Address</td>
           <td class="receipt-info-colon">:</td>
           <td class="receipt-info-value">${address}</td>
         </tr>
         ${notes ? `
         <tr>
-          <td class="receipt-info-label">Catatan</td>
+          <td class="receipt-info-label">Notes</td>
           <td class="receipt-info-colon">:</td>
           <td class="receipt-info-value receipt-notes-val">${notes}</td>
         </tr>` : ""}
         <tr>
-          <td class="receipt-info-label">Pembayaran</td>
+          <td class="receipt-info-label">Payment</td>
           <td class="receipt-info-colon">:</td>
           <td class="receipt-info-value"><strong>${payMethod}</strong></td>
         </tr>
@@ -457,13 +457,13 @@ function _buildReceiptHTML(order) {
       <div class="receipt-divider-dashed"></div>
 
       <!-- Items Table -->
-      <div class="receipt-items-title">DETAIL PESANAN</div>
+      <div class="receipt-items-title">ORDER DETAILS</div>
       <table class="receipt-items-table">
         <thead>
           <tr class="receipt-items-thead">
             <th class="receipt-th-name">Item</th>
             <th class="receipt-th-qty">Qty</th>
-            <th class="receipt-th-price">Harga</th>
+            <th class="receipt-th-price">Price</th>
             <th class="receipt-th-subtotal">Subtotal</th>
           </tr>
         </thead>
@@ -478,26 +478,26 @@ function _buildReceiptHTML(order) {
       <table class="receipt-totals-table">
         <tr>
           <td class="receipt-total-label">Subtotal</td>
-          <td class="receipt-total-value">Rp ${subtotal.toLocaleString("id-ID")}</td>
+          <td class="receipt-total-value">Rp ${subtotal.toLocaleString("en-US")}</td>
         </tr>
         ${taxAmount > 0 ? `
         <tr>
-          <td class="receipt-total-label">Pajak (${taxRate*100}%)</td>
-          <td class="receipt-total-value">Rp ${taxAmount.toLocaleString("id-ID")}</td>
+          <td class="receipt-total-label">Tax (${taxRate*100}%)</td>
+          <td class="receipt-total-value">Rp ${taxAmount.toLocaleString("en-US")}</td>
         </tr>` : ""}
         <tr>
-          <td class="receipt-total-label">Ongkos Kirim</td>
+          <td class="receipt-total-label">Delivery Fee</td>
           <td class="receipt-total-value">Rp 0</td>
         </tr>
       </table>
 
       <div class="receipt-grand-total-row">
         <span class="receipt-grand-label">TOTAL</span>
-        <span class="receipt-grand-amount">Rp ${grandTotal.toLocaleString("id-ID")}</span>
+        <span class="receipt-grand-amount">Rp ${grandTotal.toLocaleString("en-US")}</span>
       </div>
 
       <div class="receipt-payment-row">
-        <span>Metode Bayar</span>
+        <span>Payment Method</span>
         <span><strong>${payMethod}</strong></span>
       </div>
 
@@ -506,8 +506,8 @@ function _buildReceiptHTML(order) {
       <!-- Footer -->
       <div class="receipt-footer">
         <div class="receipt-footer-emoji">🙏</div>
-        <div class="receipt-footer-thanks">Terima kasih atas pesanan Anda!</div>
-        <div class="receipt-footer-sub">Makanan lezat, pelayanan terbaik.</div>
+        <div class="receipt-footer-thanks">Thank you for your order!</div>
+        <div class="receipt-footer-sub">Delicious food, best service.</div>
         <div class="receipt-footer-brand">— makan.ai —</div>
         <div class="receipt-barcode-visual">
           ||||| || ||||| | || ||||| || ||| ||||
@@ -532,7 +532,7 @@ window.printReceipt = function() {
     <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
-      <title>Struk Pembayaran - makan.ai</title>
+      <title>Payment Receipt - makan.ai</title>
       <style>
         * { margin:0; padding:0; box-sizing:border-box; }
         body {
@@ -956,7 +956,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 window.updateOrderStatus = async function(orderId, status) {
   try {
-    await updateDoc(doc(db, "orders", orderId), { status });
+    await updateDoc(doc(db, "orders", orderId), {
+      status,
+      statusHistory: arrayUnion({ status, time: Date.now() })
+    });
     if (status === "On the Way") {
       await updateDoc(doc(db, "orders", orderId), {
         driverLat: -6.2849,
@@ -965,7 +968,7 @@ window.updateOrderStatus = async function(orderId, status) {
     }
   } catch (e) {
     console.error("Error updating status:", e);
-    alert("Gagal update status: " + e.message);
+    alert("Failed to update status: " + e.message);
   }
 };
 
@@ -973,15 +976,34 @@ window.updateOrderStatus = async function(orderId, status) {
 window.activeChatUnsubscribe = null;
 window.currentChatOrderId    = null;
 
+// Chat = satu thread per buyer (collection "chats", id = email buyer)
+function chatKeyForOrder(order) {
+  return getCustomerInfo(order).key.replace(/\//g, "_");
+}
+function chatEsc(s) {
+  return String(s ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+}
+async function sendSellerChatTo(key, order, text) {
+  const info = order ? getCustomerInfo(order) : null;
+  const now = Date.now();
+  const data = { buyerKey: key, lastMessageAt: now, messages: arrayUnion({ sender: "seller", text, time: now }) };
+  if (info) { data.buyerName = info.name; data.buyerEmail = info.email; }
+  await setDoc(doc(db, "chats", key), data, { merge: true });
+}
+
 window.openChatModal = function(orderId) {
+  const order = window.activeOrders[orderId];
+  if (!order) return;
+  const key = chatKeyForOrder(order);
   document.getElementById("chatModal").classList.remove("hidden");
-  document.querySelector(".order-id-label").innerText = `Order #${orderId.slice(-5)}`;
+  document.querySelector(".order-id-label").innerText = `Buyer: ${getCustomerInfo(order).name}`;
   window.currentChatOrderId = orderId;
+  window.currentChatKey = key;
+  markChatRead(key);
 
   if (window.activeChatUnsubscribe) window.activeChatUnsubscribe();
-  window.activeChatUnsubscribe = onSnapshot(doc(db, "orders", orderId), (snap) => {
-    if (!snap.exists()) return;
-    const msgs = snap.data().chatMessages || [];
+  window.activeChatUnsubscribe = onSnapshot(doc(db, "chats", key), (snap) => {
+    const msgs = snap.exists() ? (snap.data().messages || []) : [];
     const box  = document.getElementById("chatBody");
     box.innerHTML = msgs.map(m => `
       <div class="flex flex-col ${m.sender === "seller" ? "items-end" : "items-start"}">
@@ -990,7 +1012,7 @@ window.openChatModal = function(orderId) {
           ${m.sender === "seller"
             ? "bg-gradient-to-r from-[#0284c7] to-[#00f2fe] text-white font-medium rounded-tr-sm shadow-sm"
             : "bg-white/10 text-white rounded-tl-sm"}">
-          ${m.text}
+          ${chatEsc(m.text)}
         </div>
       </div>`).join("");
     box.scrollTop = box.scrollHeight;
@@ -1005,11 +1027,9 @@ window.closeChatModal = function() {
 document.getElementById("sendChatBtn")?.addEventListener("click", async () => {
   const input = document.getElementById("chatInput");
   const val   = input.value.trim();
-  if (!val || !window.currentChatOrderId) return;
+  if (!val || !window.currentChatKey) return;
   input.value = "";
-  await updateDoc(doc(db, "orders", window.currentChatOrderId), {
-    chatMessages: arrayUnion({ sender: "seller", text: val, time: Date.now() })
-  });
+  await sendSellerChatTo(window.currentChatKey, window.activeOrders[window.currentChatOrderId], val);
 });
 
 // ── Map Tracker ───────────────────────────────────────────
@@ -1051,110 +1071,154 @@ window.closeTrackerModal = function() {
 if (currentSeller) {
   loadInventory();
   loadOrders();
-  initChatInbox();
 }
 
-// ── Chat Inbox (Seller Private Chat Panel) ────────────────
+// ── Chat Inbox (Seller Private Chat Panel) — satu thread per buyer ──
 let inboxUnsubscribe       = null;
-let currentInboxOrderId    = null;
+let currentInboxChatKey    = null;
 let inboxChatUnsubscribe   = null;
-let inboxOrdersCache       = [];
+let inboxChatsCache        = [];
 
-/** Initialise realtime listener for all orders → build inbox */
+/** Realtime listener: collection "chats" (1 dokumen = 1 buyer) */
 function initChatInbox() {
-  inboxUnsubscribe = onSnapshot(collection(db, "orders"), (snap) => {
-    const orders = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    inboxOrdersCache = orders;
-    renderChatInboxSection(orders);
-    updateUnreadBadge(orders);
+  inboxUnsubscribe = onSnapshot(collection(db, "chats"), (snap) => {
+    inboxChatsCache = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderChatInboxSection(inboxChatsCache);
+    updateUnreadBadge(inboxChatsCache);
+    if (!document.getElementById("chatInboxPanel")?.classList.contains("hidden")) {
+      renderInboxConvoList(inboxChatsCache);
+    }
   });
 }
 
-/** Count unread (last message sender === "buyer") and update badge */
-function updateUnreadBadge(orders) {
-  let unread = 0;
-  orders.forEach(o => {
-    const msgs = o.chatMessages || [];
-    if (msgs.length > 0 && msgs[msgs.length - 1].sender === "buyer") unread++;
+function lastMsg(chat) { return (chat.messages || []).at(-1); }
+
+/** Number of buyer messages not yet read by the seller (after sellerReadAt) */
+function unreadCount(chat) {
+  const readAt = chat.sellerReadAt || 0;
+  return (chat.messages || []).filter(m => m.sender === "buyer" && (m.time || 0) > readAt).length;
+}
+
+async function markChatRead(key) {
+  try { await setDoc(doc(db, "chats", key), { sellerReadAt: Date.now() }, { merge: true }); }
+  catch (e) { console.error("markChatRead:", e); }
+}
+
+let inboxFilter = "all";   // all | unread
+let inboxSearch = "";
+
+window.setInboxFilter = function(f) {
+  inboxFilter = f;
+  document.querySelectorAll(".inbox-filter-btn").forEach(b => {
+    const on = b.dataset.f === f;
+    b.style.background = on ? "rgba(0,242,254,0.2)" : "rgba(255,255,255,0.05)";
+    b.style.color = on ? "#00f2fe" : "rgba(255,255,255,0.55)";
   });
+  renderInboxConvoList(inboxChatsCache);
+};
+window.setInboxSearch = function(v) {
+  inboxSearch = (v || "").trim().toLowerCase();
+  renderInboxConvoList(inboxChatsCache);
+};
+window.markAllInboxRead = async function() {
+  const now = Date.now();
+  await Promise.all(inboxChatsCache.filter(c => unreadCount(c) > 0)
+    .map(c => setDoc(doc(db, "chats", c.id), { sellerReadAt: now }, { merge: true })));
+};
 
-  const navBadge   = document.getElementById("chat-unread-badge");
-  const inboxPill  = document.getElementById("inbox-unread-pill");
+function filteredInboxChats(chats) {
+  return sortedChats(chats).filter(c => {
+    if (inboxFilter === "unread" && unreadCount(c) === 0) return false;
+    if (inboxSearch) {
+      const hay = (chatDisplayName(c) + " " + (c.buyerEmail || "") + " " +
+        (c.messages || []).map(m => m.text).join(" ")).toLowerCase();
+      if (!hay.includes(inboxSearch)) return false;
+    }
+    return true;
+  });
+}
 
+function sortedChats(chats) {
+  return chats.filter(c => (c.messages || []).length > 0)
+    .sort((a, b) => (lastMsg(b)?.time || 0) - (lastMsg(a)?.time || 0));
+}
+
+function chatDisplayName(chat) {
+  return chat.buyerName || chat.buyerEmail || chat.id;
+}
+
+function updateUnreadBadge(chats) {
+  const unread = chats.reduce((s, c) => s + unreadCount(c), 0);
+  const navBadge  = document.getElementById("chat-unread-badge");
+  const inboxPill = document.getElementById("inbox-unread-pill");
   if (navBadge) {
     navBadge.textContent = unread;
-    if (unread > 0) { navBadge.classList.remove("hidden"); }
-    else            { navBadge.classList.add("hidden"); }
+    navBadge.style.display = unread > 0 ? "flex" : "none";
+    navBadge.classList.toggle("hidden", unread === 0);
   }
   if (inboxPill) {
     inboxPill.textContent = `${unread} unread`;
-    if (unread > 0) { inboxPill.classList.remove("hidden"); }
-    else            { inboxPill.classList.add("hidden"); }
+    inboxPill.classList.toggle("hidden", unread === 0);
   }
 }
 
-/** Render the inbox conversation list inside the page section */
-function renderChatInboxSection(orders) {
+function buyerOrderCount(chat) {
+  const key = chat.id;
+  return (window.allIncomingOrders || []).filter(o => chatKeyForOrder(o) === key).length;
+}
+
+function renderChatInboxSection(chats) {
   const listEl = document.getElementById("chat-inbox-list");
   if (!listEl) return;
-
-  const withChat = orders.filter(o => (o.chatMessages || []).length > 0);
-  withChat.sort((a, b) => {
-    const aLast = (a.chatMessages || []).at(-1)?.time || 0;
-    const bLast = (b.chatMessages || []).at(-1)?.time || 0;
-    return bLast - aLast;
-  });
+  const withChat = sortedChats(chats);
 
   if (withChat.length === 0) {
     listEl.innerHTML = `<div style="padding:2rem; text-align:center; color:#555; font-size:0.85rem;">No buyer messages yet. When a buyer sends a message, it will appear here.</div>`;
     return;
   }
 
-  listEl.innerHTML = withChat.map(order => {
-    const msgs   = order.chatMessages || [];
-    const last   = msgs.at(-1);
-    const isUnread = last?.sender === "buyer";
-    const time   = last?.time ? new Date(last.time).toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}) : "";
-    const preview = last?.text ? (last.text.length > 50 ? last.text.slice(0, 50) + "…" : last.text) : "";
+  listEl.innerHTML = withChat.map(chat => {
+    const msgs = chat.messages || [];
+    const last = lastMsg(chat);
+    const unreadN = unreadCount(chat);
+    const isUnread = unreadN > 0;
+    const time = last?.time ? new Date(last.time).toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit'}) : "";
+    const preview = chatEsc(last?.text && last.text.length > 50 ? last.text.slice(0, 50) + "…" : last?.text || "");
     const senderLabel = last?.sender === "buyer" ? "Buyer" : "You";
+    const orders = buyerOrderCount(chat);
 
     return `
-      <div onclick="openInboxDetail('${order.id}')" style="display:flex; align-items:center; gap:12px; padding:0.9rem 1rem; border-bottom:1px solid rgba(255,255,255,0.05); cursor:pointer; transition:background 0.2s; ${isUnread ? 'background:rgba(0,242,254,0.06);' : ''}" onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='${isUnread ? 'rgba(0,242,254,0.06)' : 'transparent'}'">
-        <div style="width:40px; height:40px; border-radius:50%; background:${isUnread ? 'rgba(0,242,254,0.2)' : 'rgba(255,255,255,0.05)'}; display:flex; align-items:center; justify-content:center; font-size:1.1rem; flex-shrink:0; border:1px solid ${isUnread ? 'rgba(0,242,254,0.35)' : 'rgba(255,255,255,0.08)'}">
-          🧑‍💻
-        </div>
+      <div onclick="openInboxDetail('${chatEsc(chat.id)}')" style="display:flex; align-items:center; gap:12px; padding:0.9rem 1rem; border-bottom:1px solid rgba(255,255,255,0.05); cursor:pointer; transition:background 0.2s; ${isUnread ? 'background:rgba(0,242,254,0.06);' : ''}" onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='${isUnread ? 'rgba(0,242,254,0.06)' : 'transparent'}'">
+        <div style="width:40px; height:40px; border-radius:50%; background:${isUnread ? 'rgba(0,242,254,0.2)' : 'rgba(255,255,255,0.05)'}; display:flex; align-items:center; justify-content:center; font-size:1.1rem; flex-shrink:0; border:1px solid ${isUnread ? 'rgba(0,242,254,0.35)' : 'rgba(255,255,255,0.08)'}">🧑‍💻</div>
         <div style="flex:1; min-width:0;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:3px;">
-            <span style="font-size:0.8rem; font-weight:${isUnread ? '800' : '600'}; color:${isUnread ? 'white' : 'rgba(255,255,255,0.7)'};">Order #${order.id.slice(-5).toUpperCase()}</span>
+            <span style="font-size:0.8rem; font-weight:${isUnread ? '800' : '600'}; color:${isUnread ? 'white' : 'rgba(255,255,255,0.7)'};">${chatEsc(chatDisplayName(chat))}</span>
             <span style="font-size:0.65rem; color:#555;">${time}</span>
           </div>
           <div style="font-size:0.72rem; color:#888; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
             <span style="color:${isUnread ? '#00f2fe' : '#666'};">${senderLabel}:</span> ${preview}
           </div>
-          <div style="margin-top:3px; font-size:0.65rem; color:#555;">${order.status || 'Processing'} · ${(msgs.length)} message${msgs.length !== 1 ? 's' : ''}</div>
+          <div style="margin-top:3px; font-size:0.65rem; color:#555;">${orders} order · ${msgs.length} message${msgs.length !== 1 ? 's' : ''}</div>
         </div>
-        ${isUnread ? '<div style="width:8px; height:8px; border-radius:50%; background:#00f2fe; box-shadow:0 0 8px rgba(0,242,254,0.8); flex-shrink:0;"></div>' : ''}
+        ${isUnread ? `<div style="min-width:20px; height:20px; padding:0 5px; border-radius:99px; background:#00f2fe; color:#030717; font-size:11px; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0;">${unreadN}</div>` : ''}
       </div>`;
   }).join("");
 }
 
-/** Refresh inbox manually */
 window.refreshChatInbox = function() {
-  renderChatInboxSection(inboxOrdersCache);
-  updateUnreadBadge(inboxOrdersCache);
+  renderChatInboxSection(inboxChatsCache);
+  updateUnreadBadge(inboxChatsCache);
 };
 
-/** Open the floating inbox panel */
 window.openChatInbox = function() {
   const panel = document.getElementById("chatInboxPanel");
   const inner = document.getElementById("chatInboxPanelInner");
   if (!panel || !inner) return;
   panel.classList.remove("hidden");
   setTimeout(() => { inner.style.transform = "translateX(0)"; }, 10);
-  renderInboxConvoList(inboxOrdersCache);
+  renderInboxConvoList(inboxChatsCache);
 };
 
-/** Close the floating inbox panel */
 window.closeChatInbox = function() {
   const inner = document.getElementById("chatInboxPanelInner");
   if (inner) inner.style.transform = "translateX(100%)";
@@ -1169,81 +1233,74 @@ window.closeChatInboxOnBg = function(e) {
   if (e.target === document.getElementById("chatInboxPanel")) window.closeChatInbox();
 };
 
-/** Render conversation list inside the panel */
-function renderInboxConvoList(orders) {
+function renderInboxConvoList(chats) {
   const listEl = document.getElementById("inboxConvoList");
   if (!listEl) return;
-
-  const withChat = orders.filter(o => (o.chatMessages || []).length > 0);
-  withChat.sort((a, b) => {
-    const aLast = (a.chatMessages || []).at(-1)?.time || 0;
-    const bLast = (b.chatMessages || []).at(-1)?.time || 0;
-    return bLast - aLast;
-  });
+  const withChat = filteredInboxChats(chats);
 
   if (withChat.length === 0) {
     listEl.innerHTML = `<div style="text-align:center; padding:3rem 1rem; color:#555; font-size:0.82rem; line-height:1.6;">
       <div style="font-size:2rem; margin-bottom:0.5rem;">💬</div>
-      No buyer messages yet.<br>Messages will appear here when a buyer contacts you.
+      ${inboxSearch || inboxFilter === "unread" ? "No conversations match." : "No buyer messages yet.<br>Messages will appear here when a buyer contacts you."}
     </div>`;
     return;
   }
 
-  listEl.innerHTML = withChat.map(order => {
-    const msgs   = order.chatMessages || [];
-    const last   = msgs.at(-1);
-    const isUnread = last?.sender === "buyer";
-    const time   = last?.time ? new Date(last.time).toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}) : "";
-    const preview = last?.text ? (last.text.length > 45 ? last.text.slice(0, 45) + "…" : last.text) : "";
+  listEl.innerHTML = withChat.map(chat => {
+    const last = lastMsg(chat);
+    const unreadN = unreadCount(chat);
+    const isUnread = unreadN > 0;
+    const time = last?.time ? new Date(last.time).toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit'}) : "";
+    const preview = chatEsc(last?.text && last.text.length > 45 ? last.text.slice(0, 45) + "…" : last?.text || "");
     const senderLabel = last?.sender === "buyer" ? "Buyer" : "You";
 
     return `
-      <div onclick="openInboxDetail('${order.id}')" style="display:flex; align-items:center; gap:12px; padding:0.85rem; border-radius:12px; cursor:pointer; transition:background 0.15s; margin-bottom:4px; ${isUnread ? 'background:rgba(0,242,254,0.08); border:1px solid rgba(0,242,254,0.25);' : 'background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05);'}" onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='${isUnread ? 'rgba(0,242,254,0.08)' : 'rgba(255,255,255,0.03)'}'">
+      <div onclick="openInboxDetail('${chatEsc(chat.id)}')" style="display:flex; align-items:center; gap:12px; padding:0.85rem; border-radius:12px; cursor:pointer; transition:background 0.15s; margin-bottom:4px; ${isUnread ? 'background:rgba(0,242,254,0.08); border:1px solid rgba(0,242,254,0.25);' : 'background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05);'}" onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='${isUnread ? 'rgba(0,242,254,0.08)' : 'rgba(255,255,255,0.03)'}'">
         <div style="width:42px; height:42px; border-radius:50%; background:${isUnread ? 'rgba(0,242,254,0.25)' : 'rgba(255,255,255,0.08)'}; display:flex; align-items:center; justify-content:center; font-size:1.2rem; flex-shrink:0;">🧑‍💻</div>
         <div style="flex:1; min-width:0;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2px;">
-            <span style="font-size:0.8rem; font-weight:${isUnread ? '800' : '600'}; color:${isUnread ? 'white' : 'rgba(255,255,255,0.65)'};">Order #${order.id.slice(-5).toUpperCase()}</span>
+            <span style="font-size:0.8rem; font-weight:${isUnread ? '800' : '600'}; color:${isUnread ? 'white' : 'rgba(255,255,255,0.65)'};">${chatEsc(chatDisplayName(chat))}</span>
             <span style="font-size:0.62rem; color:#555;">${time}</span>
           </div>
           <div style="font-size:0.7rem; color:#777; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
             <span style="color:${isUnread ? '#00f2fe' : '#555'};">${senderLabel}:</span> ${preview || 'No messages'}
           </div>
-          <div style="margin-top:2px; font-size:0.62rem; color:#444;">${order.status || 'Processing'}</div>
         </div>
-        ${isUnread ? '<div style="width:9px; height:9px; border-radius:50%; background:#00f2fe; box-shadow:0 0 8px #00f2fe; flex-shrink:0;"></div>' : ''}
+        ${isUnread ? `<div style="min-width:20px; height:20px; padding:0 5px; border-radius:99px; background:#00f2fe; color:#030717; font-size:11px; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0;">${unreadN}</div>` : ''}
       </div>`;
   }).join("");
 }
 
-/** Open a specific order conversation inside the panel */
-window.openInboxDetail = function(orderId) {
-  currentInboxOrderId = orderId;
+window.openInboxDetail = function(chatKey) {
+  const panel = document.getElementById("chatInboxPanel");
+  if (panel && panel.classList.contains("hidden")) window.openChatInbox();
+  currentInboxChatKey = chatKey;
+  markChatRead(chatKey);
   const detailEl = document.getElementById("inboxChatDetail");
   const titleEl  = document.getElementById("inboxDetailTitle");
   const subEl    = document.getElementById("inboxDetailSub");
   if (!detailEl) return;
 
-  titleEl.textContent = "Order #" + orderId.slice(-5).toUpperCase();
-  const order = inboxOrdersCache.find(o => o.id === orderId);
-  if (order) {
-    subEl.textContent = (order.status || "Processing") + " · " + (order.location?.address || "No address");
-  }
+  const chat = inboxChatsCache.find(c => c.id === chatKey) || { id: chatKey };
+  titleEl.textContent = chatDisplayName(chat);
+  subEl.textContent = (chat.buyerEmail || "") + (buyerOrderCount(chat) ? ` · ${buyerOrderCount(chat)} order` : "");
 
   detailEl.style.display = "flex";
   detailEl.classList.remove("hidden");
 
-  // Subscribe to live messages
   if (inboxChatUnsubscribe) inboxChatUnsubscribe();
-  inboxChatUnsubscribe = onSnapshot(doc(db, "orders", orderId), (snap) => {
-    if (!snap.exists()) return;
-    const msgs = snap.data().chatMessages || [];
+  inboxChatUnsubscribe = onSnapshot(doc(db, "chats", chatKey), (snap) => {
+    const d = snap.exists() ? snap.data() : {};
+    const msgs = d.messages || [];
     renderInboxMessages(msgs);
+    // new message while conversation is open -> mark as read immediately
+    const l = msgs.at(-1);
+    if (l && l.sender === "buyer" && (l.time || 0) > (d.sellerReadAt || 0) && currentInboxChatKey === chatKey) markChatRead(chatKey);
   });
 
   document.getElementById("inboxChatInput")?.focus();
 };
 
-/** Render messages in the inbox detail view */
 function renderInboxMessages(msgs) {
   const box = document.getElementById("inboxChatBody");
   if (!box) return;
@@ -1255,39 +1312,39 @@ function renderInboxMessages(msgs) {
 
   box.innerHTML = msgs.map(m => {
     const isSeller = m.sender === "seller";
-    const time = m.time ? new Date(m.time).toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}) : "";
+    const time = m.time ? new Date(m.time).toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit'}) : "";
     return `
       <div style="display:flex; flex-direction:column; align-items:${isSeller ? 'flex-end' : 'flex-start'};">
         <span style="font-size:0.6rem; color:#555; margin-bottom:3px; padding-right:4px; padding-left:4px;">${isSeller ? 'YOU' : 'BUYER'} · ${time}</span>
         <div style="max-width:80%; padding:0.6rem 0.9rem; border-radius:${isSeller ? '14px 14px 2px 14px' : '14px 14px 14px 2px'}; font-size:0.82rem; line-height:1.4; ${isSeller ? 'background:linear-gradient(135deg,#0284c7,#00f2fe); color:#030717; font-weight:700;' : 'background:rgba(255,255,255,0.08); color:white;'}">
-          ${m.text}
+          ${chatEsc(m.text)}
         </div>
       </div>`;
   }).join("");
   box.scrollTop = box.scrollHeight;
 }
 
-/** Send a reply from inbox detail panel */
 window.sendInboxReply = async function() {
   const input = document.getElementById("inboxChatInput");
   if (!input) return;
   const val = input.value.trim();
-  if (!val || !currentInboxOrderId) return;
+  if (!val || !currentInboxChatKey) return;
   input.value = "";
-  await updateDoc(doc(db, "orders", currentInboxOrderId), {
-    chatMessages: arrayUnion({ sender: "seller", text: val, time: Date.now() })
-  });
+  await sendSellerChatTo(currentInboxChatKey, null, val);
 };
 
-/** Go back to conversation list from detail */
 window.closeInboxDetail = function() {
   closeInboxDetailSilent();
-  renderInboxConvoList(inboxOrdersCache);
+  renderInboxConvoList(inboxChatsCache);
 };
 
 function closeInboxDetailSilent() {
   const detailEl = document.getElementById("inboxChatDetail");
   if (detailEl) { detailEl.style.display = "none"; detailEl.classList.add("hidden"); }
   if (inboxChatUnsubscribe) { inboxChatUnsubscribe(); inboxChatUnsubscribe = null; }
-  currentInboxOrderId = null;
+  currentInboxChatKey = null;
 }
+
+// Start inbox listener after all inbox state is declared
+if (currentSeller) initChatInbox();
+

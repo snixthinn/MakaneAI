@@ -804,7 +804,7 @@ async function showHistory() {
         querySnapshot.forEach((doc) => {
             const data = doc.data();
             const orderId = doc.id;
-            const date = data.timestamp?.toDate().toLocaleString('id-ID', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'}) || "Just now";
+            const date = data.timestamp?.toDate().toLocaleString('en-US', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'}) || "Just now";
             const status = data.status || "Processing";
 
             let statusPillClass = "bg-cyan-500/15 text-cyan-400 border-cyan-500/30";
@@ -849,116 +849,233 @@ window.showHistory = showHistory;
 // ===============================
 // LIVE ORDER TRACKER
 // ===============================
-window.trackLatestOrderInChat = async function() {
+window.trackLatestOrderInChat = async function(forcedOrderId) {
     try {
-        const { collection, query, orderBy, limit, getDocs, onSnapshot, doc } = await import("https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js");
+        const { collection, getDocs, onSnapshot, doc } = await import("https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js");
 
-        const q = query(collection(window.db, "orders"), orderBy("timestamp", "desc"), limit(1));
-        const querySnapshot = await getDocs(q);
+        const esc = (s) => String(s ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+        const rp  = (n) => "Rp " + (Number(n) || 0).toLocaleString("en-US");
+        const tsToDate = (t) => {
+            if (!t) return null;
+            if (t.toDate) return t.toDate();
+            if (t.seconds) return new Date(t.seconds * 1000);
+            if (typeof t === "number") return new Date(t);
+            return null;
+        };
+        const fmtTime = (d) => d ? d.toLocaleString("en-US", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) : "";
+        const normStatus = (s) => {
+            const v = String(s || "Processing").toLowerCase().trim();
+            if (["processing", "pending", "paid"].includes(v)) return "Processing";
+            if (v === "preparing") return "Preparing";
+            if (["on the way", "ready", "shipping"].includes(v)) return "On the Way";
+            if (["delivered", "selesai", "completed"].includes(v)) return "Delivered";
+            if (["cancelled", "rejected", "batal"].includes(v)) return "Rejected";
+            return "Processing";
+        };
 
-        if (querySnapshot.empty) {
+        // Only orders belonging to the logged-in buyer
+        const user  = window.currentUser || JSON.parse(localStorage.getItem("makan_user") || "null");
+        const email = (user?.email || "").toLowerCase().trim();
+        const snapAll = await getDocs(collection(window.db, "orders"));
+        const mine = snapAll.docs
+            .map(d => ({ id: d.id, ...d.data() }))
+            .filter(o => !email || (o.customerEmail || "").toLowerCase().trim() === email)
+            .sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
+
+        if (mine.length === 0) {
             appendMessage("🕵️‍♂️ You haven't placed any orders yet.");
             return;
         }
 
-        const orderId = querySnapshot.docs[0].id;
-        const containerId = "tracker-live-" + orderId;
+        const orderId = forcedOrderId || mine[0].id;
+        const containerId = "tracker-live-" + orderId + "-" + Date.now();
 
-        appendMessage(`🔍 <b>Live Order Status:</b>
-            <div id="${containerId}" class="mt-2 text-sm text-gray-400">Connecting to live feed...</div>
-        `);
+        // Picker when there is more than one order
+        const pickerHtml = mine.length > 1 ? `
+            <div class="flex gap-1.5 flex-wrap mt-2">
+                ${mine.slice(0, 6).map(o => {
+                    const ns = normStatus(o.status);
+                    const active = o.id === orderId;
+                    return `<button onclick="window.trackLatestOrderInChat('${o.id}')"
+                        class="text-[10px] font-bold px-2.5 py-1 rounded-full border transition-all ${active ? 'bg-cyan-500/25 border-cyan-400 text-cyan-300' : 'bg-white/5 border-white/10 text-gray-400 hover:border-cyan-500/40'}">
+                        #${o.id.slice(-5).toUpperCase()} · ${ns}</button>`;
+                }).join("")}
+            </div>` : "";
+
+        appendMessage(`🔍 <b>Live Order Status:</b>${pickerHtml}
+            <div id="${containerId}" class="mt-2 text-sm text-gray-400">Connecting to live feed...</div>`);
 
         if (window.buyerTrackerUnsubscribe) window.buyerTrackerUnsubscribe();
+        if (window.buyerDeliveryMap) { try { window.buyerDeliveryMap.remove(); } catch (e) {} window.buyerDeliveryMap = null; }
 
-        window.buyerTrackerUnsubscribe = onSnapshot(doc(db, "orders", orderId), (docSnap) => {
-            if(!docSnap.exists()) return;
+        const steps = [
+            { key: "Processing", label: "Order Placed",       icon: "🧾", desc: "Order received, waiting for restaurant confirmation" },
+            { key: "Preparing",  label: "Preparing",          icon: "👨‍🍳", desc: "The restaurant is preparing your food" },
+            { key: "On the Way", label: "On the Way",         icon: "🛵", desc: "The driver is heading to your location" },
+            { key: "Delivered",  label: "Delivered",          icon: "✅", desc: "Your order has arrived. Enjoy your meal!" }
+        ];
+
+        window.buyerTrackerUnsubscribe = onSnapshot(doc(window.db, "orders", orderId), (docSnap) => {
+            if (!docSnap.exists()) return;
             const order = docSnap.data();
-            const status = order.status || "Processing";
-
-            const steps = ["Processing", "Preparing", "On the Way", "Delivered"];
-            let currentIdx = steps.indexOf(status);
-            if (currentIdx === -1) currentIdx = 0;
-            const progress = ((currentIdx + 1) / steps.length) * 100;
-
-            const showMapTracker = status === "On the Way";
-            const mapContainerId = "map-tracker-" + orderId;
-
             const el = document.getElementById(containerId);
             if (!el) return;
+
+            const status = normStatus(order.status);
+            const rejected = status === "Rejected";
+            const currentIdx = rejected ? -1 : steps.findIndex(s => s.key === status);
+            const progress = rejected ? 100 : ((currentIdx + 1) / steps.length) * 100;
+            const showMap = status === "On the Way";
+            const mapContainerId = "map-tracker-" + orderId + "-" + Date.now();
+
+            // Time of each stage (from statusHistory recorded by the seller)
+            const history = order.statusHistory || [];
+            const timeFor = (key) => {
+                const entries = history.filter(h => normStatus(h.status) === key);
+                if (entries.length) return new Date(entries[entries.length - 1].time);
+                if (key === "Processing") return tsToDate(order.timestamp);
+                return null;
+            };
+            const rejectedAt = (() => {
+                const e = history.filter(h => normStatus(h.status) === "Rejected");
+                return e.length ? new Date(e[e.length - 1].time) : null;
+            })();
+
+            const items = order.items || [];
+            const subtotal = items.reduce((s, i) => s + (i.price || 0) * (i.quantity || 1), 0);
+            const total = order.totalPrice || subtotal;
+            const address = order.location?.address || "-";
+            const addrDetail = order.location?.details || "";
+            const orderDate = fmtTime(tsToDate(order.timestamp));
+
+            const badgeClass = {
+                "Processing": "bg-cyan-500/15 text-cyan-300 border-cyan-500/30",
+                "Preparing":  "bg-yellow-500/15 text-yellow-300 border-yellow-500/30",
+                "On the Way": "bg-blue-500/15 text-blue-300 border-blue-500/30",
+                "Delivered":  "bg-green-500/15 text-green-300 border-green-500/30",
+                "Rejected":   "bg-red-500/15 text-red-300 border-red-500/30"
+            }[status];
+
+            const headline = {
+                "Processing": "Waiting for restaurant confirmation…",
+                "Preparing":  "Your food is being prepared 🍳",
+                "On the Way": "Your order is on its way 🛵",
+                "Delivered":  "Your order has arrived 🎉",
+                "Rejected":   "Order cancelled by the restaurant"
+            }[status];
+
+            const timelineHtml = rejected ? `
+                <div class="bg-red-500/10 border border-red-500/25 rounded-xl p-3 mb-4 text-xs text-red-300">
+                    <div class="font-bold mb-0.5">❌ Order Cancelled</div>
+                    <div class="text-red-300/80">Sorry, the restaurant could not process this order.${rejectedAt ? " (" + fmtTime(rejectedAt) + ")" : ""} Please contact the merchant or place a new order.</div>
+                </div>` : `
+                <div class="mb-4">
+                    ${steps.map((step, idx) => {
+                        const done = idx < currentIdx || (idx === currentIdx && status === "Delivered");
+                        const active = idx === currentIdx && status !== "Delivered";
+                        const reached = idx <= currentIdx;
+                        const t = timeFor(step.key);
+                        const last = idx === steps.length - 1;
+                        return `
+                        <div class="flex gap-3">
+                            <div class="flex flex-col items-center">
+                                <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs flex-shrink-0 ${
+                                    done ? 'bg-cyan-400 text-black font-bold' :
+                                    active ? 'bg-cyan-500/20 border border-cyan-400 shadow-[0_0_10px_#00f2fe] animate-pulse' :
+                                    'bg-white/5 border border-white/10 grayscale opacity-50'}">${done ? '✓' : step.icon}</div>
+                                ${last ? '' : `<div class="w-0.5 flex-1 min-h-[22px] ${idx < currentIdx ? 'bg-cyan-400' : 'bg-white/10'}"></div>`}
+                            </div>
+                            <div class="pb-4 -mt-0.5">
+                                <div class="text-xs ${reached ? 'text-white font-bold' : 'text-gray-500'}">${step.label}
+                                    ${active ? '<span class="ml-1 text-[9px] text-cyan-300 font-bold">● NOW</span>' : ''}</div>
+                                <div class="text-[10px] ${reached ? 'text-gray-400' : 'text-gray-600'}">${step.desc}</div>
+                                ${reached && t ? `<div class="text-[9px] text-cyan-400/80 mt-0.5">${fmtTime(t)}</div>` : ''}
+                            </div>
+                        </div>`;
+                    }).join("")}
+                </div>`;
+
             el.innerHTML = `
                 <div class="bg-white/5 border border-white/10 rounded-2xl p-4 w-full max-w-sm shadow-xl">
-                    <div class="flex flex-col gap-1 mb-4">
-                        <div class="flex justify-between items-center">
-                            <span class="text-[10px] font-bold text-cyan-400 uppercase tracking-widest">Live Tracker 🛵</span>
-                            <span class="text-[10px] text-gray-500">Order #${orderId.slice(0,5)}</span>
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="text-[10px] font-bold text-cyan-400 uppercase tracking-widest">Live Tracker 🛵</span>
+                        <span class="text-[10px] text-gray-500 font-mono">#${orderId.slice(-5).toUpperCase()}</span>
+                    </div>
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="text-[10px] text-gray-500">${orderDate || ""}</span>
+                        <span class="text-[9px] px-2 py-0.5 rounded-full font-bold uppercase border ${badgeClass}">${status}</span>
+                    </div>
+                    <div class="text-sm font-bold text-white mb-2">${headline}</div>
+                    <div class="relative h-1.5 bg-white/10 rounded-full mb-5 overflow-hidden">
+                        <div class="absolute top-0 left-0 h-full ${rejected ? 'bg-red-500' : 'bg-gradient-to-r from-[#0284c7] to-[#00f2fe]'} rounded-full transition-all duration-1000" style="width:${progress}%"></div>
+                    </div>
+
+                    ${timelineHtml}
+
+                    ${showMap ? `
+                        <div class="bg-black/40 px-3 py-2 rounded-xl mb-2 border border-white/10 flex items-center gap-2">
+                            <span class="bg-cyan-500/20 text-cyan-300 p-1.5 rounded-full text-[10px]">🛵</span>
+                            <span class="text-[11px] font-bold text-white tracking-wide" id="eta-display-${mapContainerId}">Calculating ETA...</span>
                         </div>
-                    </div>
-                    <div class="relative h-1.5 bg-white/10 rounded-full mb-6 overflow-hidden">
-                        <div class="absolute top-0 left-0 h-full bg-gradient-to-r from-[#0284c7] to-[#00f2fe] rounded-full transition-all duration-1000 shadow-sm shadow-cyan-400/50" style="width: ${progress}%"></div>
-                    </div>
-                    <div class="space-y-4 ${showMapTracker ? 'mb-4' : ''}">
-                        ${steps.map((step, idx) => `
-                            <div class="flex items-center gap-3">
-                                <div class="w-3 h-3 rounded-full flex items-center justify-center ${idx <= currentIdx ? 'bg-cyan-500/20' : ''}">
-                                     <div class="w-1.5 h-1.5 rounded-full ${idx <= currentIdx ? 'bg-cyan-400 shadow-[0_0_8px_#00f2fe]' : 'bg-white/20'}"></div>
-                                </div>
-                                <span class="${idx <= currentIdx ? 'text-white font-bold' : 'text-gray-500'} text-xs tracking-wide">${step}</span>
-                            </div>
-                        `).join('')}
-                    </div>
-                    ${showMapTracker ? `
-                        <div class="bg-black/40 px-3 py-2 rounded-xl mb-2 border border-white/10 flex justify-between items-center transition-all">
-                            <div class="flex items-center gap-2">
-                                <span class="bg-cyan-500/20 text-cyan-300 p-1.5 rounded-full text-[10px]">🛵</span>
-                                <span class="text-[11px] font-bold text-white tracking-wide" id="eta-display-${orderId}">Calculating ETA...</span>
-                            </div>
-                        </div>
-                        <div id="${mapContainerId}" class="w-full h-32 rounded-xl bg-black/40 border border-white/10 mb-4 z-0 relative overflow-hidden"></div>
+                        <div id="${mapContainerId}" class="w-full h-36 rounded-xl bg-black/40 border border-white/10 mb-4 z-0 relative overflow-hidden"></div>
                     ` : ''}
-                    <button onclick="window.openBuyerChat('${orderId}')" class="w-full mt-2 bg-cyan-500/10 border border-cyan-500/25 text-cyan-400 font-bold py-2 rounded-xl text-xs hover:bg-cyan-500/20 transition-all">
+
+                    <!-- Order details -->
+                    <div class="border-t border-white/10 pt-3 mt-1">
+                        <div class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Order Details</div>
+                        <div class="space-y-1 mb-2">
+                            ${items.map(i => `
+                                <div class="flex justify-between text-[11px] text-gray-200 gap-2">
+                                    <span>${esc(i.emoji || "🍽️")} ${esc(i.name)} <span class="text-gray-500">×${i.quantity || 1}</span></span>
+                                    <span class="text-gray-400 whitespace-nowrap">${rp((i.price || 0) * (i.quantity || 1))}</span>
+                                </div>`).join("") || '<div class="text-[11px] text-gray-500">-</div>'}
+                        </div>
+                        <div class="flex justify-between items-center border-t border-white/5 pt-2 mb-3">
+                            <span class="text-[10px] text-gray-400 uppercase tracking-wider">Total</span>
+                            <span class="text-sm font-extrabold text-cyan-400">${rp(total)}</span>
+                        </div>
+                        <div class="text-[10px] text-gray-400 space-y-1">
+                            <div class="flex gap-2"><span>💳</span><span>${esc(order.method || order.paymentMethod || "QRIS")}</span></div>
+                            <div class="flex gap-2"><span>📍</span><span>${esc(address)}${addrDetail ? " — " + esc(addrDetail) : ""}</span></div>
+                            ${order.notes ? `<div class="flex gap-2"><span>📝</span><span>${esc(order.notes)}</span></div>` : ""}
+                        </div>
+                    </div>
+
+                    <button onclick="window.openBuyerChat()" class="w-full mt-3 bg-cyan-500/10 border border-cyan-500/25 text-cyan-400 font-bold py-2 rounded-xl text-xs hover:bg-cyan-500/20 transition-all">
                         💬 Chat with Merchant
                     </button>
                 </div>
             `;
 
-            if (showMapTracker) {
+            if (showMap && window.L) {
                 setTimeout(() => {
                     const driverLat = order.driverLat || -6.2849;
                     const driverLng = order.driverLng || 107.1706;
                     const homeLat = order.location?.lat || -6.2856;
                     const homeLng = order.location?.lng || 107.1710;
 
-                    let map = window.buyerDeliveryMap;
-                    const container = document.getElementById(mapContainerId);
-                    if (!map || (container && container.innerHTML === '')) {
-                        if(map) map.remove();
-                        map = L.map(mapContainerId, {zoomControl: false}).setView([driverLat, driverLng], 15);
-                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-                        const driverIcon = L.divIcon({className: 'bg-transparent', html: '<div class="text-xl">🛵</div>', iconSize: [24, 24]});
-                        const homeIcon = L.divIcon({className: 'bg-transparent', html: '<div class="text-xl">🏠</div>', iconSize: [24, 24]});
-                        window.buyerDeliveryMarker = L.marker([driverLat, driverLng], {icon: driverIcon}).addTo(map);
-                        window.buyerHomeMarker = L.marker([homeLat, homeLng], {icon: homeIcon}).addTo(map);
-                        window.buyerRouteLine = L.polyline([[driverLat, driverLng], [homeLat, homeLng]], {color: '#00f2fe', weight: 3, dashArray: '5, 5'}).addTo(map);
-                        window.buyerDeliveryMap = map;
-                    } else {
-                        window.buyerDeliveryMarker.setLatLng([driverLat, driverLng]);
-                        window.buyerHomeMarker.setLatLng([homeLat, homeLng]);
-                        window.buyerRouteLine.setLatLngs([[driverLat, driverLng], [homeLat, homeLng]]);
-                    }
+                    if (window.buyerDeliveryMap) { try { window.buyerDeliveryMap.remove(); } catch (e) {} }
+                    const map = L.map(mapContainerId, { zoomControl: false }).setView([driverLat, driverLng], 15);
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+                    const driverIcon = L.divIcon({ className: 'bg-transparent', html: '<div class="text-xl">🛵</div>', iconSize: [24, 24] });
+                    const homeIcon   = L.divIcon({ className: 'bg-transparent', html: '<div class="text-xl">🏠</div>', iconSize: [24, 24] });
+                    L.marker([driverLat, driverLng], { icon: driverIcon }).addTo(map);
+                    L.marker([homeLat, homeLng], { icon: homeIcon }).addTo(map);
+                    L.polyline([[driverLat, driverLng], [homeLat, homeLng]], { color: '#00f2fe', weight: 3, dashArray: '5, 5' }).addTo(map);
+                    window.buyerDeliveryMap = map;
 
                     const distMeters = map.distance([driverLat, driverLng], [homeLat, homeLng]);
-                    const etaBox = document.getElementById(`eta-display-${orderId}`);
-                    if (distMeters < 50) {
-                        etaBox.innerText = "Arrived at destination!";
-                        etaBox.classList.add("text-green-400");
-                    } else {
-                        const mins = Math.max(1, Math.ceil((distMeters / ((30 * 1000) / 60))));
-                        const distKm = (distMeters / 1000).toFixed(1);
-                        etaBox.innerText = `Arriving in ~${mins} min (${distKm} km)`;
-                        etaBox.classList.remove("text-green-400");
+                    const etaBox = document.getElementById(`eta-display-${mapContainerId}`);
+                    if (etaBox) {
+                        if (distMeters < 50) {
+                            etaBox.innerText = "The driver has arrived at your location!";
+                            etaBox.classList.add("text-green-400");
+                        } else {
+                            const mins = Math.max(1, Math.ceil(distMeters / ((30 * 1000) / 60)));
+                            etaBox.innerText = `Arriving in ~${mins} min (${(distMeters / 1000).toFixed(1)} km)`;
+                        }
                     }
-                    const bounds = L.latLngBounds([[driverLat, driverLng], [homeLat, homeLng]]);
-                    map.fitBounds(bounds, {padding: [15, 15]});
+                    map.fitBounds(L.latLngBounds([[driverLat, driverLng], [homeLat, homeLng]]), { padding: [15, 15] });
                     map.invalidateSize();
                 }, 100);
             }
