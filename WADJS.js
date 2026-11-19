@@ -298,6 +298,223 @@ function renderCartDrawer() {
     if (totalItemsEl) totalItemsEl.innerText = `${totalItems} item${totalItems > 1 ? 's' : ''}`;
 }
 
+const DEFAULT_MENU_CATALOG = [
+    // ── FOOD ────────────────────────────────────────────────
+    {
+        name: "Nasi Goreng Spesial",
+        category: "food",
+        price: 22000,
+        stock: 25,
+        emoji: "🍳",
+        tags: ["food", "savory", "spicy"],
+        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Chaufa_salvaje_Selva_17042010.JPG/330px-Chaufa_salvaje_Selva_17042010.JPG"
+    },
+    {
+        name: "Ayam Geprek Sambal Matah",
+        category: "food",
+        price: 18000,
+        stock: 30,
+        emoji: "🍗",
+        tags: ["food", "spicy", "cheap"],
+        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Ayam_sambal_matah_dan_tempe_goreng.jpg/330px-Ayam_sambal_matah_dan_tempe_goreng.jpg"
+    },
+    {
+        name: "Bakso Mercon Pedas",
+        category: "food",
+        price: 16000,
+        stock: 30,
+        emoji: "🍲",
+        tags: ["food", "spicy", "cheap"],
+        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Bakso_mi_bihun.jpg/330px-Bakso_mi_bihun.jpg"
+    },
+    {
+        name: "Mie Ayam Jamur",
+        category: "food",
+        price: 15000,
+        stock: 35,
+        emoji: "🍜",
+        tags: ["food", "savory", "cheap"],
+        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Mi_ayam_jamur.JPG/330px-Mi_ayam_jamur.JPG"
+    },
+    {
+        name: "Sate Ayam Madura",
+        category: "food",
+        price: 28000,
+        stock: 20,
+        emoji: "🍢",
+        tags: ["food", "sweet", "savory"],
+        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Sate_Ponorogo.jpg/330px-Sate_Ponorogo.jpg"
+    },
+    {
+        name: "Ayam Bakar Madu",
+        category: "food",
+        price: 30000,
+        stock: 20,
+        emoji: "🍗",
+        tags: ["food", "sweet", "savory"],
+        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/Ayam_bakar_bumbu_rujak.jpg/330px-Ayam_bakar_bumbu_rujak.jpg"
+    },
+    {
+        name: "Rendang Daging Padang",
+        category: "food",
+        price: 35000,
+        stock: 15,
+        emoji: "🥩",
+        tags: ["food", "spicy", "savory"],
+        image: "https://images.unsplash.com/photo-1548943487-a2e4142f6f96?auto=format&fit=crop&w=400&q=80"
+    },
+
+    // ── DRINKS ──────────────────────────────────────────────
+    {
+        name: "Es Teh Manis",
+        category: "drink",
+        price: 6000,
+        stock: 50,
+        emoji: "🧋",
+        tags: ["drink", "sweet", "cheap"],
+        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/ES_TEH_MANIS.jpg/330px-ES_TEH_MANIS.jpg"
+    },
+    {
+        name: "Es Jeruk Peras",
+        category: "drink",
+        price: 10000,
+        stock: 40,
+        emoji: "🍊",
+        tags: ["drink", "sweet", "cheap"],
+        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Orangejuice.jpg/330px-Orangejuice.jpg"
+    },
+    {
+        name: "Es Kopi Susu Gula Aren",
+        category: "drink",
+        price: 18000,
+        stock: 30,
+        emoji: "☕",
+        tags: ["drink", "sweet", "cheap"],
+        image: "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=400&q=80"
+    },
+    {
+        name: "Matcha Latte Iced",
+        category: "drink",
+        price: 25000,
+        stock: 25,
+        emoji: "🍵",
+        tags: ["drink", "sweet"],
+        image: "https://images.unsplash.com/photo-1515823064-d6e0c04616a7?auto=format&fit=crop&w=400&q=80"
+    },
+    {
+        name: "Mango Smoothie",
+        category: "drink",
+        price: 24000,
+        stock: 20,
+        emoji: "🥭",
+        tags: ["drink", "sweet"],
+        image: "https://images.unsplash.com/photo-1623065422902-30a2d299bbe4?auto=format&fit=crop&w=400&q=80"
+    },
+
+    // ── DESSERT ─────────────────────────────────────────────
+    {
+        name: "Es Cendol Dawet",
+        category: "dessert",
+        price: 12000,
+        stock: 25,
+        emoji: "🍧",
+        tags: ["dessert", "sweet", "cheap"],
+        image: "https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=400&q=80"
+    },
+    {
+        name: "Pisang Goreng Cokelat Keju",
+        category: "dessert",
+        price: 14000,
+        stock: 30,
+        emoji: "🍌",
+        tags: ["dessert", "sweet", "cheap"],
+        image: "https://images.unsplash.com/photo-1528975604071-b4dc52a2d18c?auto=format&fit=crop&w=400&q=80"
+    },
+    {
+        name: "Martabak Mini Manis",
+        category: "dessert",
+        price: 15000,
+        stock: 25,
+        emoji: "🥞",
+        tags: ["dessert", "sweet", "cheap"],
+        image: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?auto=format&fit=crop&w=400&q=80"
+    },
+    {
+        name: "Vanilla Gelato Scoop",
+        category: "dessert",
+        price: 18000,
+        stock: 20,
+        emoji: "🍨",
+        tags: ["dessert", "sweet", "cheap"],
+        image: "https://images.unsplash.com/photo-1570197788417-0e82375c9371?auto=format&fit=crop&w=400&q=80"
+    },
+    {
+        name: "Chocolate Lava Cake",
+        category: "dessert",
+        price: 28000,
+        stock: 15,
+        emoji: "🍫",
+        tags: ["dessert", "sweet"],
+        image: "https://images.unsplash.com/photo-1624353365286-3f8d62daad51?auto=format&fit=crop&w=400&q=80"
+    },
+    {
+        name: "Classic Tiramisu Cup",
+        category: "dessert",
+        price: 32000,
+        stock: 15,
+        emoji: "🍰",
+        tags: ["dessert", "sweet"],
+        image: "https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?auto=format&fit=crop&w=400&q=80"
+    }
+];
+
+function inferCategory(item) {
+    const explicit = (item.category || "").toLowerCase().trim();
+    if (explicit === "food" || explicit === "drink" || explicit === "dessert") return explicit;
+    if (explicit === "drinks" || explicit === "beverage" || explicit === "beverages") return "drink";
+
+    const tags = (item.tags || []).map(t => String(t).toLowerCase().trim());
+    if (tags.includes("dessert")) return "dessert";
+    if (tags.includes("drink") || tags.includes("drinks") || tags.includes("beverage")) return "drink";
+    if (tags.includes("food")) return "food";
+
+    const name = (item.name || "").toLowerCase();
+    if (/(cendol|pisang|martabak|gelato|ice cream|cake|tiramisu|pudding|brownie|donut|waffle|dessert|kue|klepon)/.test(name)) {
+        return "dessert";
+    }
+    if (/(es teh|es jeruk|teh|kopi|coffee|latte|matcha|juice|jus|smoothie|boba|milk|susu|air|water|soda|drink|minum)/.test(name)) {
+        return "drink";
+    }
+    if (tags.includes("sweet") && !tags.includes("savory") && !tags.includes("spicy")) {
+        return "dessert";
+    }
+    return "food";
+}
+
+function matchesFlavorFilter(item, filterKey) {
+    if (!filterKey || filterKey === "all") return true;
+    const tags = (item.tags || []).map(t => String(t).toLowerCase().trim());
+    const name = (item.name || "").toLowerCase();
+    if (filterKey === "cheap") {
+        return tags.includes("cheap") || Number(item.price || 0) <= 20000;
+    }
+    if (filterKey === "spicy") {
+        return tags.includes("spicy") || /(pedas|mercon|geprek|sambal|balado|rendang|rica)/.test(name);
+    }
+    if (filterKey === "sweet") {
+        return tags.includes("sweet") || /(manis|madu|gula|cokelat|chocolate|vanilla|tiramisu|matcha|mango|smoothie|cendol|cake|gelato|martabak)/.test(name);
+    }
+    return tags.includes(filterKey);
+}
+
+function resolveFallbackImage(item) {
+    const cat = inferCategory(item);
+    if (cat === "dessert") return "images/sweets.jpg.webp";
+    if (matchesFlavorFilter(item, "spicy")) return "images/spicy.jpg";
+    if (matchesFlavorFilter(item, "cheap")) return "images/cheap.jpg";
+    return "images/savory.jpg";
+}
+
 function resolveImage(item) {
     if (item.image) return item.image;
     const name = (item.name || "food").toLowerCase().trim();
@@ -306,30 +523,40 @@ function resolveImage(item) {
         { key: "nasi", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Chaufa_salvaje_Selva_17042010.JPG/330px-Chaufa_salvaje_Selva_17042010.JPG" },
         { key: "sate", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Sate_Ponorogo.jpg/330px-Sate_Ponorogo.jpg" },
         { key: "ayam bakar", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/Ayam_bakar_bumbu_rujak.jpg/330px-Ayam_bakar_bumbu_rujak.jpg" },
+        { key: "ayam geprek", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Ayam_sambal_matah_dan_tempe_goreng.jpg/330px-Ayam_sambal_matah_dan_tempe_goreng.jpg" },
         { key: "ayam", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Ayam_sambal_matah_dan_tempe_goreng.jpg/330px-Ayam_sambal_matah_dan_tempe_goreng.jpg" },
         { key: "sop iga", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Sop_Iga.jpg/330px-Sop_Iga.jpg" },
         { key: "iga", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Sop_Iga.jpg/330px-Sop_Iga.jpg" },
-        { key: "bakso roket", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Bakso_mi_bihun.jpg/330px-Bakso_mi_bihun.jpg" },
         { key: "bakso", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Bakso_mi_bihun.jpg/330px-Bakso_mi_bihun.jpg" },
-        { key: "orek tempe", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Tempeh_%288681605421%29.jpg/330px-Tempeh_%288681605421%29.jpg" },
         { key: "tempe", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Tempeh_%288681605421%29.jpg/330px-Tempeh_%288681605421%29.jpg" },
         { key: "soto", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Soto_Betawi_Daging_Sapi.jpg/330px-Soto_Betawi_Daging_Sapi.jpg" },
         { key: "es jeruk", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Orangejuice.jpg/330px-Orangejuice.jpg" },
         { key: "jeruk", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Orangejuice.jpg/330px-Orangejuice.jpg" },
         { key: "es teh", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/ES_TEH_MANIS.jpg/330px-ES_TEH_MANIS.jpg" },
         { key: "teh", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/ES_TEH_MANIS.jpg/330px-ES_TEH_MANIS.jpg" },
+        { key: "kopi", url: "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=400&q=80" },
+        { key: "coffee", url: "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=400&q=80" },
+        { key: "mango", url: "https://images.unsplash.com/photo-1623065422902-30a2d299bbe4?auto=format&fit=crop&w=400&q=80" },
+        { key: "smoothie", url: "https://images.unsplash.com/photo-1623065422902-30a2d299bbe4?auto=format&fit=crop&w=400&q=80" },
+        { key: "cendol", url: "https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=400&q=80" },
+        { key: "pisang", url: "https://images.unsplash.com/photo-1528975604071-b4dc52a2d18c?auto=format&fit=crop&w=400&q=80" },
+        { key: "martabak", url: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?auto=format&fit=crop&w=400&q=80" },
+        { key: "gelato", url: "https://images.unsplash.com/photo-1570197788417-0e82375c9371?auto=format&fit=crop&w=400&q=80" },
+        { key: "lava cake", url: "https://images.unsplash.com/photo-1624353365286-3f8d62daad51?auto=format&fit=crop&w=400&q=80" },
+        { key: "tiramisu", url: "https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?auto=format&fit=crop&w=400&q=80" },
+        { key: "cake", url: "https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?auto=format&fit=crop&w=400&q=80" },
         { key: "gado", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Gado_gado.jpg/330px-Gado_gado.jpg" },
         { key: "burger", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/NCI_Visuals_Food_Hamburger.jpg/330px-NCI_Visuals_Food_Hamburger.jpg" },
         { key: "batagor", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Batagor.jpg/330px-Batagor.jpg" },
         { key: "mie", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Mi_ayam_jamur.JPG/330px-Mi_ayam_jamur.JPG" },
         { key: "jagung", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Jagung_bakar.jpg/330px-Jagung_bakar.jpg" },
-        { key: "matcha", url: "https://images.unsplash.com/photo-1515823064-d6e0c04616a7?auto=format&fit=crop&w=300&q=80" },
-        { key: "rendang", url: "https://images.unsplash.com/photo-1548943487-a2e4142f6f96?auto=format&fit=crop&w=300&q=80" }
+        { key: "matcha", url: "https://images.unsplash.com/photo-1515823064-d6e0c04616a7?auto=format&fit=crop&w=400&q=80" },
+        { key: "rendang", url: "https://images.unsplash.com/photo-1548943487-a2e4142f6f96?auto=format&fit=crop&w=400&q=80" }
     ];
     for (const m of FOOD_MAP) {
         if (name.includes(m.key)) return m.url;
     }
-    return "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=300&q=80";
+    return resolveFallbackImage(item);
 }
 
 // ===============================
@@ -524,8 +751,8 @@ window.sendMessage = async function () {
         if (menuData.length === 0) {
             appendMessage("Sorry, there are currently no menus available in the database.");
         } else {
-            appendMessage("Here is our entire menu list:");
-            displayFoodCards(menuData);
+            appendMessage("Here is our entire menu list (Food, Drinks & Dessert):");
+            displayFoodCards(menuData, { category: "all", title: "All Menu Catalog" });
         }
     }
     else if (text.includes("lokasi") || text.includes("map") || text.includes("peta")) {
@@ -577,17 +804,43 @@ window.sendMessage = async function () {
             return;
         }
 
-        // CATEGORY SEARCH FALLBACK
-        const tags = ["sweet", "spicy", "cheap", "savory", "snack", "drink"];
-        const detectedTags = tags.filter(tag => text.includes(tag));
+        // 3-CATEGORY MENU ROUTING (Food, Drinks, Dessert) + Flavor Filter
+        let targetCat = null;
+        if (/\b(food|foods|makanan|makan)\b/.test(text)) targetCat = "food";
+        else if (/\b(drink|drinks|beverage|beverages|minuman|minum)\b/.test(text)) targetCat = "drink";
+        else if (/\b(dessert|desserts|pencuci mulut)\b/.test(text)) targetCat = "dessert";
 
-        if (detectedTags.length > 0) {
+        const flavorTags = ["cheap", "spicy", "sweet", "savory"];
+        const detectedFlavors = flavorTags.filter(tag => text.includes(tag));
+
+        if (targetCat) {
+            let results = menuData.filter(item => inferCategory(item) === targetCat);
+            if (detectedFlavors.length > 0) {
+                results = results.filter(item => detectedFlavors.some(f => matchesFlavorFilter(item, f)));
+            }
+            const catMeta = {
+                food:    { label: "Food Menu",    emoji: "🍛" },
+                drink:   { label: "Drinks Menu",  emoji: "🥤" },
+                dessert: { label: "Dessert Menu", emoji: "🍰" }
+            }[targetCat];
+
+            if (results.length > 0) {
+                appendMessage(`${catMeta.emoji} Here is our <b>${catMeta.label}</b> — use the filter pills below to find <b>Cheap</b>, ${targetCat === "food" ? "<b>Spicy</b>, " : ""}or <b>Sweet</b> items:`);
+                displayFoodCards(results, { category: targetCat, title: `${catMeta.emoji} ${catMeta.label}` });
+            } else {
+                appendMessage(`Sorry, no items found in ${catMeta.label}.`);
+            }
+            return;
+        }
+
+        // FLAVOR / TAG SEARCH FALLBACK
+        if (detectedFlavors.length > 0) {
             const results = menuData.filter(item =>
-                detectedTags.some(tag => item.tags?.includes(tag))
+                detectedFlavors.some(tag => matchesFlavorFilter(item, tag))
             );
             if (results.length > 0) {
-                appendMessage(`Found menu in category ${detectedTags.join(", ")}:`);
-                displayFoodCards(results);
+                appendMessage(`Found menu matching <b>${detectedFlavors.join(", ")}</b>:`);
+                displayFoodCards(results, { category: "all", title: `Filtered: ${detectedFlavors.join(", ")}` });
             } else {
                 appendMessage("Sorry, that category is currently empty.");
             }
@@ -599,9 +852,9 @@ window.sendMessage = async function () {
             });
             if (searchResults.length > 0) {
                 appendMessage(`Here are the menus for "${msg}":`);
-                displayFoodCards(searchResults);
+                displayFoodCards(searchResults, { category: "all", title: `Search: ${msg}` });
             } else {
-                appendMessage("Sorry, I didn't quite catch that. Try typing your order (e.g., '2 bakso') or type 'menu'!");
+                appendMessage("Sorry, I didn't quite catch that. Try choosing <b>Food</b>, <b>Drinks</b>, or <b>Dessert</b>, or type your order (e.g., '2 bakso')!");
             }
         }
     }
@@ -610,13 +863,36 @@ window.sendMessage = async function () {
 // ===============================
 // REALTIME MENU LOADER
 // ===============================
+let hasSeededDefaultMenu = false;
+
 async function loadMenuRealtime() {
-    const { collection, onSnapshot } = await import("https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js");
+    const { collection, onSnapshot, addDoc } = await import("https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js");
     const q = collection(window.db, "products");
-    onSnapshot(q, (snapshot) => {
-        menuData = snapshot.docs.map(doc => ({
+    onSnapshot(q, async (snapshot) => {
+        const docs = snapshot.docs.map(doc => ({
             id: doc.id,
             ...doc.data()
+        }));
+
+        // Seed curated Food, Drinks & Dessert items if missing in Firestore (once per session)
+        if (!hasSeededDefaultMenu) {
+            hasSeededDefaultMenu = true;
+            const existingNames = new Set(docs.map(d => (d.name || "").toLowerCase().trim()));
+            const missing = DEFAULT_MENU_CATALOG.filter(item => !existingNames.has(item.name.toLowerCase().trim()));
+            if (missing.length > 0) {
+                for (const item of missing) {
+                    try {
+                        await addDoc(q, { ...item, createdAt: Date.now() });
+                    } catch (seedErr) {
+                        console.warn("Could not seed menu item:", item.name, seedErr);
+                    }
+                }
+            }
+        }
+
+        menuData = docs.map(item => ({
+            ...item,
+            category: inferCategory(item)
         }));
         console.log("Menu data loaded:", menuData.length, "items");
     }, (error) => {
@@ -649,30 +925,37 @@ function appendMessage(text, isBot = true) {
 }
 
 // ===============================
-// FOOD CARD DISPLAY
+// FOOD CARD DISPLAY + SUB-FILTERS
 // ===============================
-function displayFoodCards(items) {
-    const chat = document.getElementById("chat-window");
-    const container = document.createElement("div");
-    container.className = "results-container animate-in";
+window._catalogCache = window._catalogCache || {};
 
-    items.forEach(item => {
-        const card = document.createElement("div");
-        card.className = "food-card mb-2";
-
+function buildFoodCardsHtml(items) {
+    if (!items || items.length === 0) {
+        return `<div style="padding:1rem; text-align:center; color:rgba(255,255,255,0.45); font-size:0.78rem; background:rgba(255,255,255,0.03); border:1px dashed rgba(255,255,255,0.12); border-radius:1rem;">No items match this filter yet.</div>`;
+    }
+    return items.map(item => {
         const isOutOfStock = item.stock <= 0;
         const inCart = cart.find(c => c.id === item.id);
         const qtyInCart = inCart ? inCart.quantity : 0;
         const imgUrl = resolveImage(item);
+        const fallbackImg = resolveFallbackImage(item);
+        const cat = inferCategory(item);
+        const catLabel = cat === "drink" ? "Drinks" : cat === "dessert" ? "Dessert" : "Food";
+        const flavorBadges = [];
+        if (matchesFlavorFilter(item, "cheap")) flavorBadges.push(`<span class="tag-badge" style="background:rgba(34,197,94,0.14); color:#4ade80; border:1px solid rgba(34,197,94,0.3);">💸 Cheap</span>`);
+        if (cat === "food" && matchesFlavorFilter(item, "spicy")) flavorBadges.push(`<span class="tag-badge" style="background:rgba(239,68,68,0.14); color:#f87171; border:1px solid rgba(239,68,68,0.3);">🔥 Spicy</span>`);
+        if (matchesFlavorFilter(item, "sweet")) flavorBadges.push(`<span class="tag-badge" style="background:rgba(245,158,11,0.14); color:#fbbf24; border:1px solid rgba(245,158,11,0.3);">🍯 Sweet</span>`);
 
-        card.innerHTML = `
-            <img src="${imgUrl}" class="menu-img" onerror="this.style.display='none'">
+        return `
+        <div class="food-card mb-2">
+            <img src="${imgUrl}" alt="${item.name || 'Menu'}" class="menu-img" onerror="this.onerror=null; this.src='${fallbackImg}';">
             <div class="flex flex-col flex-1 min-w-0">
                 <div class="flex items-center gap-2">
                     <span class="sender-name" style="font-size:0.78rem; white-space:normal; word-break:break-word; line-height:1.3;">${item.emoji || ""} ${item.name || "Unnamed Menu"}</span>
                 </div>
                 <div class="flex gap-1.5 mt-1 items-center flex-wrap">
-                    <span class="tag-badge">${item.tags?.[0] || 'Menu'}</span>
+                    <span class="tag-badge">${catLabel}</span>
+                    ${flavorBadges.join("")}
                     <span class="text-[10px] text-gray-400">Stock: ${item.stock ?? "∞"}</span>
                     ${qtyInCart > 0 ? `<span class="tag-badge" style="background:rgba(0,242,254,0.15); color:#00f2fe; border:1px solid rgba(0,242,254,0.3);">🛒 ${qtyInCart} in cart</span>` : ''}
                 </div>
@@ -692,23 +975,73 @@ function displayFoodCards(items) {
                        </div>`
                 }
             </div>
-        `;
-        container.appendChild(card);
-    });
+        </div>`;
+    }).join("");
+}
+
+window.filterCatalogCards = function(catalogId, filterKey) {
+    const entry = window._catalogCache[catalogId];
+    if (!entry) return;
+
+    const filtered = entry.items.filter(item => matchesFlavorFilter(item, filterKey));
+    const listEl = document.getElementById(`cards-list-${catalogId}`);
+    if (listEl) listEl.innerHTML = buildFoodCardsHtml(filtered);
+
+    const barEl = document.getElementById(`subfilter-${catalogId}`);
+    if (barEl) {
+        barEl.querySelectorAll("button").forEach(btn => {
+            const active = btn.dataset.filter === filterKey;
+            btn.style.background = active ? "rgba(0, 242, 254, 0.25)" : "rgba(255, 255, 255, 0.06)";
+            btn.style.borderColor = active ? "#00f2fe" : "rgba(255, 255, 255, 0.14)";
+            btn.style.color = active ? "#ffffff" : "#94a3b8";
+        });
+    }
+};
+
+function displayFoodCards(items, options = {}) {
+    const chat = document.getElementById("chat-window");
+    const catalogId = "cat-" + Date.now() + "-" + Math.floor(Math.random() * 1000);
+    const category = options.category || "all";
+    const title = options.title || "Menu Catalog";
+
+    window._catalogCache[catalogId] = { items, category };
+
+    // Build sub-filters: Cheap & Sweet for all categories, Spicy specifically for Food (and All)
+    const subFilters = [
+        { key: "all",   label: "All" },
+        { key: "cheap", label: "💸 Cheap" }
+    ];
+    if (category === "food" || category === "all") {
+        subFilters.push({ key: "spicy", label: "🔥 Spicy" });
+    }
+    subFilters.push({ key: "sweet", label: "🍯 Sweet" });
+
+    const subFilterHtml = `
+        <div id="subfilter-${catalogId}" class="flex gap-1.5 flex-wrap my-2.5">
+            ${subFilters.map((f, idx) => `
+                <button type="button" data-filter="${f.key}" onclick="window.filterCatalogCards('${catalogId}', '${f.key}')"
+                    style="font-size:0.7rem; font-weight:700; padding:5px 11px; border-radius:99px; cursor:pointer; transition:all 0.2s; border:1px solid ${idx === 0 ? '#00f2fe' : 'rgba(255,255,255,0.14)'}; background:${idx === 0 ? 'rgba(0,242,254,0.25)' : 'rgba(255,255,255,0.06)'}; color:${idx === 0 ? '#ffffff' : '#94a3b8'};">
+                    ${f.label}
+                </button>
+            `).join("")}
+        </div>
+    `;
 
     const msgDiv = document.createElement("div");
     msgDiv.className = "msg-bot animate-in";
     msgDiv.innerHTML = `
         <div class="bot-avatar">🤖</div>
         <div class="bubble-bot" style="max-width: 90%;">
-            <span class="sender-name">Menu Catalog</span>
+            <span class="sender-name">${title}</span>
             <p>Choose your favorite — tap <b>+ Add</b> to put items in your cart:</p>
-            <div id="cards-wrapper"></div>
+            ${subFilterHtml}
+            <div id="cards-list-${catalogId}" class="results-container animate-in">
+                ${buildFoodCardsHtml(items)}
+            </div>
         </div>
     `;
 
     chat.appendChild(msgDiv);
-    msgDiv.querySelector("#cards-wrapper").appendChild(container);
     chat.scrollTop = chat.scrollHeight;
 }
 

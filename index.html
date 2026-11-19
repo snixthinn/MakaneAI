@@ -276,37 +276,27 @@ function setQuery(val) {
 
 <!-- Mobile Horizontal Filter Bar (visible on mobile screens) -->
 <div class="mobile-filter-bar">
-    <button onclick="setQuery('📖 Menu')" class="mobile-chip">📖 All Menu</button>
-    <button onclick="setQuery('🔥 Spicy')" class="mobile-chip">🔥 Spicy</button>
-    <button onclick="setQuery('💸 Cheap')" class="mobile-chip">💸 Cheap</button>
-    <button onclick="setQuery('🍰 Sweet')" class="mobile-chip">🍰 Sweet</button>
-    <button onclick="setQuery('🍲 Savory')" class="mobile-chip">🍲 Savory</button>
+    <button onclick="setQuery('🍛 Food')" class="mobile-chip">🍛 Food</button>
+    <button onclick="setQuery('🥤 Drinks')" class="mobile-chip">🥤 Drinks</button>
+    <button onclick="setQuery('🍰 Dessert')" class="mobile-chip">🍰 Dessert</button>
 </div>
 
 <!-- Desktop Left Quick Filter Dock (hidden on mobile) -->
 <aside class="desktop-filter-dock">
     <div class="dock-header">
-        <span class="dock-title">FILTER</span>
+        <span class="dock-title">MENU</span>
     </div>
-    <button onclick="setQuery('📖 Menu')" class="tag-chip-vertical" title="Show All Menu">
-        <span class="chip-emoji">📖</span>
-        <span class="chip-text">Menu</span>
+    <button onclick="setQuery('🍛 Food')" class="tag-chip-vertical" title="Food Menu">
+        <span class="chip-emoji">🍛</span>
+        <span class="chip-text">Food</span>
     </button>
-    <button onclick="setQuery('🔥 Spicy')" class="tag-chip-vertical" title="Spicy Favorites">
-        <span class="chip-emoji">🔥</span>
-        <span class="chip-text">Spicy</span>
+    <button onclick="setQuery('🥤 Drinks')" class="tag-chip-vertical" title="Drinks Menu">
+        <span class="chip-emoji">🥤</span>
+        <span class="chip-text">Drinks</span>
     </button>
-    <button onclick="setQuery('💸 Cheap')" class="tag-chip-vertical" title="Budget Friendly">
-        <span class="chip-emoji">💸</span>
-        <span class="chip-text">Cheap</span>
-    </button>
-    <button onclick="setQuery('🍰 Sweet')" class="tag-chip-vertical" title="Sweet Treats">
+    <button onclick="setQuery('🍰 Dessert')" class="tag-chip-vertical" title="Dessert Menu">
         <span class="chip-emoji">🍰</span>
-        <span class="chip-text">Sweet</span>
-    </button>
-    <button onclick="setQuery('🍲 Savory')" class="tag-chip-vertical" title="Savory Meals">
-        <span class="chip-emoji">🍲</span>
-        <span class="chip-text">Savory</span>
+        <span class="chip-text">Dessert</span>
     </button>
 </aside>
 
@@ -316,11 +306,11 @@ function setQuery(val) {
         <div class="bot-avatar">🤖</div>
         <div class="bubble-bot">
             <span class="sender-name">Assistant Bot</span>
-            <p>Hello! Welcome to <b>Makan.ai</b>. Ready to satisfy your cravings? Browse our full menu or ask for recommendations like <b>"spicy"</b>, <b>"sweet"</b>, or <b>"cheap"</b>.</p>
+            <p>Hello! Welcome to <b>Makan.ai</b>. Choose one of our 3 menu categories — <b>Food</b>, <b>Drinks</b>, or <b>Dessert</b> — and filter by <b>Cheap</b>, <b>Spicy</b>, or <b>Sweet</b>!</p>
             <div class="welcome-quick-actions">
-                <button onclick="setQuery('📖 Menu')" class="welcome-chip">📖 Explore All Menu</button>
-                <button onclick="setQuery('🔥 Spicy')" class="welcome-chip">🔥 Recommended Spicy</button>
-                <button onclick="setQuery('💸 Cheap')" class="welcome-chip">💸 Under 25k</button>
+                <button onclick="setQuery('🍛 Food')" class="welcome-chip">🍛 Food</button>
+                <button onclick="setQuery('🥤 Drinks')" class="welcome-chip">🥤 Drinks</button>
+                <button onclick="setQuery('🍰 Dessert')" class="welcome-chip">🍰 Dessert</button>
             </div>
         </div>
     </div>
